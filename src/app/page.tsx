@@ -1,12 +1,13 @@
 import { Button } from "@/components/ui/button";
+import { getCourses } from "../../queries/courses";
+
+const courses = await getCourses();
+console.log(courses[0]);
 
 export default function Page() {
-  function onSubmit() {
-    
-  }
   return (
     <>
-      <Button onClick={onSubmit}>Class</Button>
+      <Button>Class</Button>
     </>
   );
 }
