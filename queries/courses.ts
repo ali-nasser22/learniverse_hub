@@ -1,9 +1,13 @@
-import { Course, ICourse } from "../model/course-model";
+import { Course } from "../model/course-model";
 import { Category } from "../model/category-model";
 import { User } from "../model/user-model";
 import { Testimonial } from "../model/testimonial-model";
 import { Module } from "../model/module-model";
-import { replaceMongoIdInArray } from "@/lib/convertData";
+import {
+  replaceMongoIdInArray,
+  replaceMongoIdInObject,
+} from "@/lib/convertData";
+//import CoursesPage from "@/app/(main)/courses/CoursesPageClient";
 
 export async function getCourseList() {
   const courses = await Course.find({})
@@ -33,5 +37,22 @@ export async function getCourseList() {
       model: Module,
     })
     .lean();
-  return replaceMongoIdInArray(courses as ICourse[]);
+  return replaceMongoIdInArray(courses);
+}
+export async function getCourseById(id: string) {
+  const course = await Course.findById(id)
+    .populate({
+      path: "category",
+      model: Category,
+    })
+    .populate({
+      path: "instructor",
+      model: User,
+    })
+    .populate({
+      path: "modules",
+      model: Module,
+    })
+    .lean();
+  return replaceMongoIdInObject(course);
 }
