@@ -1,7 +1,7 @@
-import mongoose, { Schema, model, Document, Types } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
+import { MongoDocument } from "@/lib/convertData";
 
-export interface ICategory extends Document {
-  _id: Types.ObjectId;
+export interface ICategory extends MongoDocument {
   title: string;
   description?: string;
   thumbnail: string;

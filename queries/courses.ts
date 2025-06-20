@@ -3,9 +3,19 @@ import { Category } from "../model/category-model";
 import { User } from "../model/user-model";
 import { Testimonial } from "../model/testimonial-model";
 import { Module } from "../model/module-model";
+import { replaceMongoIdInArray } from "@/lib/convertData";
 
-export async function getCourses() {
-  const courses: ICourse[] = await Course.find({})
+export async function getCourseList() {
+  const courses = await Course.find({})
+    .select([
+      "title",
+      "subtitle",
+      "thumbnail",
+      "price",
+      "modules",
+      "category",
+      "instructor",
+    ])
     .populate({
       path: "category",
       model: Category,
@@ -21,6 +31,7 @@ export async function getCourses() {
     .populate({
       path: "modules",
       model: Module,
-    });
-  return courses;
+    })
+    .lean();
+  return replaceMongoIdInArray(courses as ICourse[]);
 }

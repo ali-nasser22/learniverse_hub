@@ -1,11 +1,11 @@
-import mongoose, { Schema, Document, Types } from "mongoose";
+import mongoose, { Schema, Types } from "mongoose";
 import { ITestimonial } from "./testimonial-model";
 import { ICategory } from "./category-model";
 import { IUser } from "./user-model";
 import { IModule } from "./module-model";
+import { MongoDocument } from "@/lib/convertData";
 
-export interface ICourse extends Document {
-  _id: Types.ObjectId;
+export interface ICourse extends MongoDocument {
   title: string;
   subtitle?: string;
   description: string;
