@@ -1,7 +1,5 @@
-
-
 // For single objects
-export const replaceMongoIdInObject = <T extends { _id: any }>(
+export const replaceMongoIdInObject = <T extends { _id: unknown }>(
   obj: T | null | undefined
 ): (Omit<T, "_id"> & { id: string }) | null => {
   if (!obj || typeof obj !== "object") {
@@ -21,7 +19,7 @@ export const replaceMongoIdInObject = <T extends { _id: any }>(
 };
 
 // For arrays
-export const replaceMongoIdInArray = <T extends { _id: any }>(
+export const replaceMongoIdInArray = <T extends { _id: unknown }>(
   array: T[] | null | undefined
 ): (Omit<T, "_id"> & { id: string })[] => {
   if (!array || !Array.isArray(array)) {
@@ -32,7 +30,7 @@ export const replaceMongoIdInArray = <T extends { _id: any }>(
     return array.map((item) => {
       if (!item || typeof item !== "object") {
         console.warn("replaceMongoIdInArray: Invalid item in array:", item);
-        return { id: "" } as any;
+        return { id: "" } as unknown as Omit<T, "_id"> & { id: string };
       }
 
       const { _id, ...rest } = item;
@@ -48,9 +46,9 @@ export const replaceMongoIdInArray = <T extends { _id: any }>(
 };
 
 // Helper function to handle both single objects and arrays
-export const replaceMongoId = <T extends { _id: any }>(
+export const replaceMongoId = <T extends { _id: unknown }>(
   data: T | T[] | null | undefined
-): any => {
+): unknown => {
   if (Array.isArray(data)) {
     return replaceMongoIdInArray(data);
   } else {

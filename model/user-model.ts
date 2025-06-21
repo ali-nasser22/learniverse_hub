@@ -4,6 +4,8 @@ export interface IUser extends Document {
   _id: Types.ObjectId;
   firstName?: string;
   lastName?: string;
+  first_name?: string;
+  last_name?: string;
   password: string;
   email: string;
   phone: string;
@@ -15,6 +17,7 @@ export interface IUser extends Document {
     facebook?: string;
   };
   profilePicture?: string;
+  profile_picture?: string;
   designation: string;
 }
 

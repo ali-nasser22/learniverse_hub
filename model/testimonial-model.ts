@@ -1,11 +1,12 @@
 import mongoose, { Schema, model, Document, Types } from "mongoose";
+import { IUser } from "./user-model";
 
 export interface ITestimonial extends Document {
   _id: Types.ObjectId;
   content: string;
   rating: number;
   courseId: Types.ObjectId;
-  user: Types.ObjectId;
+  user: IUser;
 }
 
 const TestimonialSchema = new Schema<ITestimonial>({
