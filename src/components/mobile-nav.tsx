@@ -1,17 +1,16 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { useLockBody } from "../../hooks/use-lock-body";
-//import { X } from "lucide-react";
 import { Button, buttonVariants } from "./ui/button";
-//import { Menu } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-//import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 interface NavItem {
   title: string;
@@ -26,6 +25,8 @@ interface MobileNavProps {
 
 const MobileNav: React.FC<MobileNavProps> = ({ items, children }) => {
   useLockBody();
+  const { data: session } = useSession();
+
   return (
     <div
       className={cn(
@@ -47,29 +48,36 @@ const MobileNav: React.FC<MobileNavProps> = ({ items, children }) => {
             </Link>
           ))}
         </nav>
-        <div className="items-center gap-3 flex lg:hidden">
-          <Link
-            href="/login"
-            className={cn(buttonVariants({ size: "sm" }), "px-4")}
-          >
-            Login
-          </Link>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="cursor-pointer">
-                Register
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56 mt-4">
-              <DropdownMenuItem className="cursor-pointer">
-                <Link href="">Student</Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem className="cursor-pointer">
-                <Link href="">Instructor</Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+
+        {session ? (
+          // Show profile section when user is logged in
+          <></>
+        ) : (
+          // Show login and register when user is not logged in
+          <div className="items-center gap-3 flex lg:hidden">
+            <Link
+              href="/login"
+              className={cn(buttonVariants({ size: "sm" }), "px-4")}
+            >
+              Login
+            </Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm" className="cursor-pointer">
+                  Register
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 mt-4">
+                <DropdownMenuItem className="cursor-pointer">
+                  <Link href="/register/student">Student</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">
+                  <Link href="/register/instructor">Instructor</Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        )}
       </div>
     </div>
   );

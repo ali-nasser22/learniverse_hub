@@ -1,0 +1,15 @@
+"use server";
+import { signIn } from "../../lib/auth";
+
+export async function ceredntialLogin(formData: FormData) {
+  try {
+    const response = await signIn("credentials", {
+      email: formData.get("email"),
+      password: formData.get("password"),
+      redirect: false,
+    });
+    return response;
+  } catch (error) {
+    throw new Error(error as string);
+  }
+}

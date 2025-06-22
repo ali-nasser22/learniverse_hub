@@ -21,45 +21,64 @@ export interface IUser extends Document {
   designation: string;
 }
 
-const UserSchema = new Schema<IUser>({
-  firstName: {
-    type: String,
+const UserSchema = new Schema<IUser>(
+  {
+    firstName: {
+      type: String,
+      required: false,
+    },
+    lastName: {
+      type: String,
+      required: false,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    phone: {
+      type: String,
+      required: false,
+    },
+    role: {
+      type: String,
+      required: true,
+      enum: ["ADMIN", "Instructor", "Student", "Teacher"],
+    },
+    bio: {
+      type: String,
+      required: false,
+    },
+    socialMedia: {
+      X: {
+        type: String,
+        required: false,
+      },
+      linkedin: {
+        type: String,
+        required: false,
+      },
+      facebook: {
+        type: String,
+        required: false,
+      },
+    },
+    profilePicture: {
+      type: String,
+      required: false,
+    },
+    designation: {
+      type: String,
+      required: false,
+    },
   },
-  lastName: {
-    type: String,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  email: {
-    type: String,
-    required: true,
-  },
-  phone: {
-    type: String,
-    required: true,
-  },
-  role: {
-    type: String,
-    required: true,
-  },
-  bio: {
-    type: String,
-    required: true,
-  },
-  socialMedia: {
-    X: String,
-    linkedin: String,
-    facebook: String,
-  },
-  profilePicture: {
-    type: String,
-  },
-  designation: {
-    type: String,
-    required: true,
-  },
-});
+  {
+    timestamps: true, // Adds createdAt and updatedAt fields
+  }
+);
 
 export const User = mongoose.models.User ?? model<IUser>("User", UserSchema);
