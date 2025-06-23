@@ -1,12 +1,8 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { User } from "../../model/user-model";
+import { User } from "./model/user-model";
 import bcrypt from "bcryptjs";
-
-interface Credentials {
-  email?: string;
-  password?: string;
-}
+import { authConfig } from "./auth.config";
 
 export const {
   handlers: { GET, POST },
@@ -14,20 +10,22 @@ export const {
   signIn,
   signOut,
 } = NextAuth({
-  session: {
-    strategy: "jwt",
-  },
+  ...authConfig,
   providers: [
     CredentialsProvider({
-      async authorize(credentials: Credentials | undefined) {
+      async authorize(credentials) {
         if (credentials == null) return null;
+
         try {
           const user = await User.findOne({ email: credentials?.email });
+          console.log(user);
+
           if (user) {
             const isMatch = await bcrypt.compare(
-              credentials.password!,
+              credentials.password,
               user.password
             );
+
             if (isMatch) {
               return user;
             } else {
@@ -38,9 +36,9 @@ export const {
             console.error("User not found");
             throw new Error("User not found");
           }
-        } catch (err: unknown) {
+        } catch (err) {
           console.error(err);
-          throw new Error(err as string);
+          throw new Error(err);
         }
       },
     }),
