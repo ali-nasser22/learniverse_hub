@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import Image from "next/image";
 import { getCourseById } from "../../../../../../queries/courses";
+import { formatPrice } from "@/lib/formatPrice";
 
 interface CourseDetailsIntroProps {
   params: Promise<{ id: string }>;
@@ -123,6 +124,13 @@ const CourseDetailsIntro = async ({ params }: CourseDetailsIntroProps) => {
                   >
                     See Intro
                   </Link>
+                  <Button
+                    className={cn(
+                      buttonVariants({ variant: "destructive", size: "lg" })
+                    )}
+                  >
+                    Price: {formatPrice(course?.price)}
+                  </Button>
                 </div>
               </div>
             </div>

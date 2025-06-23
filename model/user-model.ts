@@ -4,12 +4,10 @@ export interface IUser extends Document {
   _id: Types.ObjectId;
   firstName?: string;
   lastName?: string;
-  first_name?: string;
-  last_name?: string;
   password: string;
   email: string;
   phone: string;
-  role: "Admin" | "Instructor" | "Student" | "Teacher";
+  role: "ADMIN" | "INSTRUCTOR" | "STUDENT";
   bio: string;
   socialMedia?: {
     X?: string;
@@ -47,11 +45,12 @@ const UserSchema = new Schema<IUser>(
     role: {
       type: String,
       required: true,
-      enum: ["ADMIN", "INSTRUCTOR", "STUDENT", "TEACHER"],
+      enum: ["ADMIN", "INSTRUCTOR", "STUDENT"],
     },
     bio: {
       type: String,
       required: false,
+      default: "",
     },
     socialMedia: {
       X: {
@@ -70,10 +69,12 @@ const UserSchema = new Schema<IUser>(
     profilePicture: {
       type: String,
       required: false,
+      default: "https://i.pravatar.cc",
     },
     designation: {
       type: String,
       required: false,
+      default: "",
     },
   },
   {

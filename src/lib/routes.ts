@@ -7,4 +7,8 @@ export const PUBLIC_ROUTES = [
   "/register/instructor",
   "/courses",
   "/api/register",
+  "/features",
+  "/blog",
+  "/pricing",
+  "/documentation",
 ];
