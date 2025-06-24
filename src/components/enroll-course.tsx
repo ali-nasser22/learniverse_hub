@@ -6,16 +6,18 @@ import { createCheckoutSession } from "@/app/actions/stripe";
 
 type EnrollCourseProps = {
   asLink?: boolean;
+  courseId?: string;
 };
 
-const EnrollCourse = ({ asLink }: EnrollCourseProps) => {
-  const handleEnroll = async (formData: FormData) => {
-    const { url } = await createCheckoutSession(formData);
+const EnrollCourse = ({ asLink, courseId }: EnrollCourseProps) => {
+  const handleEnroll = async (courseId: string) => {
+    const { url } = await createCheckoutSession(courseId);
     window.location.assign(url as string);
   };
   return (
     <>
-      <form action={handleEnroll}>
+      <form action={() => handleEnroll(courseId as string)}>
+        {courseId && <input type="hidden" name="courseId" value={courseId} />}
         {asLink ? (
           <Button
             type="submit"
