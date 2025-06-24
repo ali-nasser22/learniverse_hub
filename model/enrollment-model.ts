@@ -4,7 +4,7 @@ import { IUser } from "./user-model";
 import { MongoDocument } from "@/lib/convertData";
 
 export interface IEnrollment extends MongoDocument {
-  id: string;
+  id?: string;
   enrollment_date: Date;
   status: string;
   completion_date?: Date;
@@ -25,6 +25,7 @@ const EnrollmentSchema = new Schema<IEnrollment>({
   },
   completion_date: {
     type: Date,
+    required: false,
   },
   method: {
     type: String,
