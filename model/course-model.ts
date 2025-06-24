@@ -7,6 +7,7 @@ import { MongoDocument } from "@/lib/convertData";
 
 export interface ICourse extends MongoDocument {
   _id: Types.ObjectId;
+  id?: string;
   title: string;
   subtitle?: string;
   description: string;

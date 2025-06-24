@@ -4,6 +4,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import Image from "next/image";
 import { getCourseById } from "../../../../../../queries/courses";
 import { formatPrice } from "@/lib/formatPrice";
+import EnrollCourse from "@/components/enroll-course";
 
 interface CourseDetailsIntroProps {
   params: Promise<{ id: string }>;
@@ -110,12 +111,7 @@ const CourseDetailsIntro = async ({ params }: CourseDetailsIntroProps) => {
                 </p>
 
                 <div className="mt-6 flex items-center justify-center flex-wrap gap-3">
-                  <Link
-                    href={`/courses/${resolvedParams.id}/enroll`}
-                    className={cn(buttonVariants({ size: "lg" }))}
-                  >
-                    Enroll Now
-                  </Link>
+                  <EnrollCourse asLink={false} />
                   <Link
                     href={`/courses/${resolvedParams.id}/preview`}
                     className={cn(
