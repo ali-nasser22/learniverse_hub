@@ -1,162 +1,72 @@
-import { Badge } from "@/components/ui/badge";
-import { BookOpen } from "lucide-react";
-import Image from "next/image";
+import EnrolledCourseCard from "../../_component/enrolled-coursecard";
+import { auth } from "../../../../../../auth";
+import { getUserByEmail } from "../../../../../../queries/users";
+import { redirect } from "next/navigation";
+import { getEnrolledCoursesForUser } from "../../../../../../queries/enrollement";
+import { ICourse } from "../../../../../../model/course-model";
+import { IUser } from "../../../../../../model/user-model";
 
-interface CourseData {
-  id: number;
-  title: string;
-  category: string;
-  chapters: number;
-  totalModules: number;
-  completedModules: number;
-  totalQuizzes: number;
-  quizzesTaken: number;
-  quizMarks: number;
-  otherMarks: number;
-  totalMarks: number;
-  imageUrl: string;
+interface EnrollmentWithCourse {
+  id: string;
+  course: ICourse;
 }
 
-// Mock data - in a real app, this would come from props or API
-const mockCourses: CourseData[] = [
-  {
-    id: 1,
-    title: "Reactive Accelerator",
-    category: "Development",
-    chapters: 4,
-    totalModules: 10,
-    completedModules: 5,
-    totalQuizzes: 10,
-    quizzesTaken: 10,
-    quizMarks: 50,
-    otherMarks: 50,
-    totalMarks: 100,
-    imageUrl: "/assets/images/courses/course_1.png",
-  },
-  {
-    id: 2,
-    title: "Reactive Accelerator",
-    category: "Development",
-    chapters: 4,
-    totalModules: 10,
-    completedModules: 5,
-    totalQuizzes: 10,
-    quizzesTaken: 10,
-    quizMarks: 50,
-    otherMarks: 50,
-    totalMarks: 100,
-    imageUrl: "/assets/images/courses/course_1.png",
-  },
-  {
-    id: 3,
-    title: "Reactive Accelerator",
-    category: "Development",
-    chapters: 4,
-    totalModules: 10,
-    completedModules: 5,
-    totalQuizzes: 10,
-    quizzesTaken: 10,
-    quizMarks: 50,
-    otherMarks: 50,
-    totalMarks: 100,
-    imageUrl: "/assets/images/courses/course_1.png",
-  },
-  {
-    id: 4,
-    title: "Reactive Accelerator",
-    category: "Development",
-    chapters: 4,
-    totalModules: 10,
-    completedModules: 5,
-    totalQuizzes: 10,
-    quizzesTaken: 10,
-    quizMarks: 50,
-    otherMarks: 50,
-    totalMarks: 100,
-    imageUrl: "/assets/images/courses/course_1.png",
-  },
-];
+async function EnrolledCourses() {
+  try {
+    const session = await auth();
 
-function EnrolledCourses() {
-  return (
-    <div className="grid sm:grid-cols-2 gap-6">
-      {mockCourses.map((course) => (
-        <div
-          key={course.id}
-          className="group hover:shadow-sm transition overflow-hidden border rounded-lg p-3 h-full"
-        >
-          <div className="relative w-full aspect-video rounded-md overflow-hidden">
-            <Image
-              src={course.imageUrl}
-              alt={course.title}
-              className="object-cover"
-              fill
+    if (!session?.user?.email) {
+      redirect("/login");
+    }
+
+    const user = await getUserByEmail(session.user.email);
+
+    if (!user?.id) {
+      console.error("User not found for email:", session.user.email);
+      redirect("/login");
+    }
+
+    const enrollmentCourses = await getEnrolledCoursesForUser(user.id);
+
+    const validEnrollments =
+      enrollmentCourses?.filter(
+        (enrollment): enrollment is EnrollmentWithCourse =>
+          enrollment &&
+          enrollment.id &&
+          enrollment.course &&
+          typeof enrollment.course === "object"
+      ) || [];
+
+    return (
+      <div className="grid sm:grid-cols-2 gap-6 md:pb-23">
+        {validEnrollments.length > 0 ? (
+          validEnrollments.map((enrollment) => (
+            <EnrolledCourseCard
+              key={enrollment.id}
+              course={enrollment.course}
+              student={user as IUser}
             />
-          </div>
-          <div className="flex flex-col pt-2">
-            <div className="text-lg md:text-base font-medium group-hover:text-sky-700 line-clamp-2">
-              {course.title}
-            </div>
-            <span className="text-xs text-muted-foreground">
-              {course.category}
-            </span>
-            <div className="my-3 flex items-center gap-x-2 text-sm md:text-xs">
-              <div className="flex items-center gap-x-1 text-slate-500">
-                <BookOpen className="w-4" />
-                <span>{course.chapters} Chapters</span>
-              </div>
-            </div>
-            <div className="border-b pb-2 mb-2">
-              <div className="flex items-center justify-between">
-                <span className="text-md md:text-sm font-medium text-slate-700">
-                  Total Modules: {course.totalModules}
-                </span>
-                <div className="text-md md:text-sm font-medium text-slate-700">
-                  Completed Modules{" "}
-                  <Badge variant="default">
-                    {course.completedModules.toString().padStart(2, "0")}
-                  </Badge>
-                </div>
-              </div>
-              <div className="flex items-center justify-between mt-2">
-                <span className="text-md md:text-sm font-medium text-slate-700">
-                  Total Quizzes: {course.totalQuizzes}
-                </span>
-                <div className="text-md md:text-sm font-medium text-slate-700">
-                  Quiz taken{" "}
-                  <Badge variant="default">{course.quizzesTaken}</Badge>
-                </div>
-              </div>
-              <div className="flex items-center justify-between mt-2">
-                <span className="text-md md:text-sm font-medium text-slate-700">
-                  Mark from Quizzes
-                </span>
-                <span className="text-md md:text-sm font-medium text-slate-700">
-                  {course.quizMarks}
-                </span>
-              </div>
-              <div className="flex items-center justify-between mt-2">
-                <span className="text-md md:text-sm font-medium text-slate-700">
-                  Others
-                </span>
-                <span className="text-md md:text-sm font-medium text-slate-700">
-                  {course.otherMarks}
-                </span>
-              </div>
-            </div>
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-md md:text-sm font-medium text-slate-700">
-                Total Marks
-              </span>
-              <span className="text-md md:text-sm font-medium text-slate-700">
-                {course.totalMarks}
-              </span>
+          ))
+        ) : (
+          <div className="col-span-full text-center py-8">
+            <div className="text-sm text-muted-foreground">
+              You have not enrolled in any courses yet.
             </div>
           </div>
+        )}
+      </div>
+    );
+  } catch (error) {
+    console.error("Error loading enrolled courses:", error);
+
+    return (
+      <div className="col-span-full text-center py-8">
+        <div className="text-sm text-destructive">
+          Something went wrong loading your courses. Please try again later.
         </div>
-      ))}
-    </div>
-  );
+      </div>
+    );
+  }
 }
 
 export default EnrolledCourses;

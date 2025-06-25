@@ -2,6 +2,8 @@ import mongoose, { Schema, model } from "mongoose";
 import { MongoDocument } from "@/lib/convertData";
 
 export interface ICategory extends MongoDocument {
+  id: string;
+  _id: string;
   title: string;
   description?: string;
   thumbnail: string;
