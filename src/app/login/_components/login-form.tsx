@@ -11,11 +11,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ceredntialLogin } from "@/app/actions";
-import { useState } from "react";
+
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export function LoginForm() {
-  const [error, setError] = useState<string>("");
   const router = useRouter();
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -24,13 +24,12 @@ export function LoginForm() {
       const formData = new FormData(event.currentTarget);
       const response = await ceredntialLogin(formData);
       if (!!response.error) {
-        console.log(response.error);
-        setError(response.error);
+        toast.error(response.error);
       } else {
-        router.push("/courses");
+        router.push("/account");
       }
-    } catch (e: any) {
-      setError(e.message);
+    } catch (error) {
+      toast.error("An error occurred while logging in ");
     }
   }
 

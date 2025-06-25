@@ -17,7 +17,7 @@ async function Profile() {
           <ContactInfo user={user as IUser} />
         </div>
         <div className="flex-1">
-          <ChangePassword />
+          <ChangePassword user={user as IUser} />
         </div>
       </div>
     </>
