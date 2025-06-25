@@ -1,7 +1,11 @@
 "use client";
+import { Button } from "@/components/ui/button";
+
+import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import React from "react";
+
 
 interface MenuItem {
   label: string;
@@ -31,12 +35,14 @@ function Menu() {
         </li>
       ))}
       <li className="navbar-item account-menu">
-        <Link
-          href="#"
-          className="navbar-link text-slate-400 flex items-center py-2 rounded"
+        <Button
+          variant="destructive"
+          className="cursor-pointer"
+          size="sm"
+          onClick={() => signOut({ callbackUrl: "/login" })}
         >
-          <h6 className="mb-0 font-semibold">Sign Out</h6>
-        </Link>
+          Logout
+        </Button>
       </li>
     </ul>
   );
