@@ -102,3 +102,20 @@ export async function getCourseDetailsByInstructor(instructorId: string) {
     rating: averageRating.toPrecision(2),
   };
 }
+
+export async function getCoursesByInstructor(instructorId: string) {
+  try {
+    const courses = await Course.find({
+      instructor: instructorId,
+    })
+      .populate({
+        path: "category",
+        model: Category,
+      })
+      .lean();
+    return replaceMongoIdInArray(courses);
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+}

@@ -1,7 +1,14 @@
-import { MessageSquare, Presentation, Star, UsersRound } from "lucide-react";
+import {
+  MessageSquare,
+  Presentation,
+  Star,
+  UsersRound,
+  User,
+} from "lucide-react";
 import Image from "next/image";
 import { IUser } from "../../../../../../model/user-model";
 import { getCourseDetailsByInstructor } from "../../../../../../queries/courses";
+import Link from "next/link";
 
 interface CourseInstructorProps {
   instructor: IUser;
@@ -48,6 +55,19 @@ const CourseInstructor = async ({ instructor }: CourseInstructorProps) => {
                 <li className="flex space-x-3">
                   <Star className="text-gray-600" />
                   <div>{courseDetails?.rating} Average Rating</div>
+                </li>
+                <li className="flex space-x-3">
+                  <Link
+                    href={`/instructors/${instructor._id}`}
+                    className="text-black "
+                  >
+                    <div className="flex items-center space-x-3">
+                      <User className="text-gray-600" />
+                      <div className="text-black hover:text-blue-500">
+                        View Profile
+                      </div>
+                    </div>
+                  </Link>
                 </li>
               </ul>
             </div>

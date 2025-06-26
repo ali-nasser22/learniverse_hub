@@ -7,3 +7,12 @@ export async function getUserByEmail(email: string) {
   }).lean();
   return replaceMongoIdInObject(user as unknown as IUser);
 }
+export async function getUserById(id: string) {
+  try {
+    const user = await User.findById(id).lean();
+    return replaceMongoIdInObject(user as unknown as IUser);
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
