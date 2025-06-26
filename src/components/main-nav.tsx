@@ -15,6 +15,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import MobileNav from "./mobile-nav";
 import { useSession, signOut } from "next-auth/react";
 import { Session } from "next-auth";
+import { IUser } from "../../model/user-model";
+import { getUserByEmail } from "../../queries/users";
 
 interface NavItem {
   title: string;
@@ -32,13 +34,18 @@ const MainNav: React.FC<MainNavProps> = ({ items, children }) => {
 
   const { data: session } = useSession();
   const [loginSession, setLoginSession] = useState<Session | null>(null);
+  const [loggedInUser, setLoggedInUser] = useState<IUser | null>(null);
 
   useEffect(() => {
-    console.log("Test Info");
     setLoginSession(session);
+    async function getUser() {
+      const response = await fetch("/api/user/me");
+      const data = await response.json();
+      console.log(data);
+      setLoggedInUser(data);
+    }
+    getUser();
   }, [session]);
-
-  console.log(loginSession);
 
   return (
     <>

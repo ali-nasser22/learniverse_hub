@@ -11,6 +11,20 @@ import { getEnrollmentsForCourse } from "./enrollement";
 import { getTestimonialsForCourse } from "./testimonials";
 //import CoursesPage from "@/app/(main)/courses/CoursesPageClient";
 
+function groupBy<T>(array: T[], keyGetter: (item: T) => string) {
+  return array.reduce(
+    (acc, item) => {
+      const groupKey = keyGetter(item);
+      if (!acc[groupKey]) {
+        acc[groupKey] = [];
+      }
+      acc[groupKey].push(item);
+      return acc;
+    },
+    {} as Record<string, T[]>
+  );
+}
+
 export async function getCourseList() {
   const courses = await Course.find({})
     .select([
@@ -73,12 +87,19 @@ export async function getCourseDetailsByInstructor(instructorId: string) {
   }).lean();
   const enrollments = await Promise.all(
     courses.map(async (course) => {
-      const enrollment = await getEnrollmentsForCourse(
-        course?._id.toString() as string
-      );
+      const enrollment = await getEnrollmentsForCourse(course?._id.toString());
       return enrollment;
     })
   );
+  // Group enrollments by course
+  const groupByCourse = groupBy(enrollments.flat(), (item) => item.course);
+
+  // calculate total revenue
+  const totalRevenue = courses.reduce((acc, course) => {
+    const courseEnrollments = groupByCourse[course._id.toString()] || [];
+    return acc + courseEnrollments.length * course.price;
+  }, 0);
+
   const totalEnrollments = enrollments.reduce(
     (acc, curr) => acc + curr.length,
     0
@@ -100,6 +121,7 @@ export async function getCourseDetailsByInstructor(instructorId: string) {
     enrollments: totalEnrollments,
     reviews: totalTestimonials,
     rating: averageRating.toPrecision(2),
+    revenue: totalRevenue,
   };
 }
 

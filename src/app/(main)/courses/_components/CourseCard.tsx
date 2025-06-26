@@ -44,15 +44,14 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
               variant={110 === 100 ? "success" : ""}
             /> */}
           </div>
+          <div className="flex items-center justify-between mt-4">
+            <p className="text-md md:text-sm font-medium text-slate-700">
+              {formatPrice(course?.price)}
+            </p>
+            <EnrollCourse asLink={true} courseId={course?.id} />
+          </div>
         </div>
       </Link>
-
-      <div className="flex items-center justify-between mt-4">
-        <p className="text-md md:text-sm font-medium text-slate-700">
-          {formatPrice(course?.price)}
-        </p>
-        <EnrollCourse asLink={true} courseId={course?.id} />
-      </div>
     </div>
   );
 };
