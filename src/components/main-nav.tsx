@@ -16,7 +16,6 @@ import MobileNav from "./mobile-nav";
 import { useSession, signOut } from "next-auth/react";
 import { Session } from "next-auth";
 import { IUser } from "../../model/user-model";
-import { getUserByEmail } from "../../queries/users";
 
 interface NavItem {
   title: string;
@@ -39,14 +38,16 @@ const MainNav: React.FC<MainNavProps> = ({ items, children }) => {
   useEffect(() => {
     setLoginSession(session);
     async function getUser() {
-      const response = await fetch("/api/user/me");
-      const data = await response.json();
-      console.log(data);
-      setLoggedInUser(data);
+      try {
+        const response = await fetch("/api/user/me");
+        const data = await response.json();
+        setLoggedInUser(data);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      }
     }
     getUser();
   }, [session]);
-
   return (
     <>
       <div className="flex items-center w-full px-6 justify-between">
@@ -83,10 +84,13 @@ const MainNav: React.FC<MainNavProps> = ({ items, children }) => {
                 <div className="cursor-pointer">
                   <Avatar>
                     <AvatarImage
-                      src="https://github.com/shadcn.png"
-                      alt="@ali"
+                      src={loggedInUser?.profilePicture}
+                      alt={loggedInUser?.firstName}
                     />
-                    <AvatarFallback>CN</AvatarFallback>
+                    <AvatarFallback>
+                      {loggedInUser?.firstName?.charAt(0)}
+                      {loggedInUser?.lastName?.charAt(0)}
+                    </AvatarFallback>
                   </Avatar>
                 </div>
               </DropdownMenuTrigger>
@@ -94,6 +98,11 @@ const MainNav: React.FC<MainNavProps> = ({ items, children }) => {
                 <DropdownMenuItem className="cursor-pointer" asChild>
                   <Link href="/account">Profile</Link>
                 </DropdownMenuItem>
+                {loggedInUser?.role === "INSTRUCTOR" && (
+                  <DropdownMenuItem className="cursor-pointer" asChild>
+                    <Link href="/dashboard">Dashboard</Link>
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem className="cursor-pointer" asChild>
                   <Link href="account/enrolled-courses">My Courses</Link>
                 </DropdownMenuItem>
