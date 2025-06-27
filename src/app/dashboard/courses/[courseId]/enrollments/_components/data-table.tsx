@@ -49,15 +49,14 @@ export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
     },
   });
 
-  console.log(table.getColumn("name"));
   return (
     <div>
       <div className="flex items-center justify-between py-4">
         <Input
           placeholder="Filter by student name..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("studentName")?.getFilterValue() as string) ?? ""}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
+            table.getColumn("studentName")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />

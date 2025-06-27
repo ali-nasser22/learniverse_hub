@@ -6,23 +6,21 @@ import { ArrowUpDown } from "lucide-react";
 
 import { ColumnDef } from "@tanstack/react-table";
 
-interface Student {
-  name: string;
-  email: string;
-  quizMark: number | null;
-  progress: number | null;
-}
+
 
 interface Enrollment {
   id: string;
-  student: Student;
+  studentName: string;
+  studentEmail: string;
+  quizMark: string;
+  progress: string;
   date: string;
-}
+} 
 
 export const columns: ColumnDef<Enrollment>[] = [
   {
-    id: "name",
-    accessorKey: "student.name",
+    id: "studentName",
+    accessorKey: "studentName",
     header: ({ column }) => {
       return (
         <Button
@@ -35,7 +33,7 @@ export const columns: ColumnDef<Enrollment>[] = [
     },
   },
   {
-    accessorKey: "student.email",
+    accessorKey: "studentEmail",
     header: ({ column }) => {
       return (
         <Button
@@ -48,7 +46,7 @@ export const columns: ColumnDef<Enrollment>[] = [
     },
   },
   {
-    accessorKey: "student.quizMark",
+    accessorKey: "quizMark",
     header: ({ column }) => {
       return (
         <Button
@@ -61,7 +59,7 @@ export const columns: ColumnDef<Enrollment>[] = [
     },
   },
   {
-    accessorKey: "student.progress",
+    accessorKey: "progress",
     header: ({ column }) => {
       return (
         <Button

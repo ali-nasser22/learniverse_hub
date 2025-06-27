@@ -5,9 +5,9 @@ import { MongoDocument } from "@/lib/convertData";
 
 export interface IEnrollment extends MongoDocument {
   id?: string;
-  enrollment_date: Date;
+  enrollment_date: Date | string;
   status: string;
-  completion_date?: Date;
+  completion_date?: Date | string;
   method: string;
   course: ICourse;
   student: IUser;
