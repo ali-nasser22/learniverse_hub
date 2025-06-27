@@ -9,23 +9,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
-import {
-  GraduationCap,
-  Star,
-  ArrowUpDown,
-  MoreHorizontal,
-  Pencil,
-} from "lucide-react";
+import { GraduationCap } from "lucide-react";
+import { Star } from "lucide-react";
+import { ArrowUpDown, MoreHorizontal, Pencil } from "lucide-react";
 import Link from "next/link";
+import { ColumnDef } from "@tanstack/react-table";
 
-export interface Course {
+interface Course {
   id: string;
   title: string;
-  price: number;
+  price: number | null;
   isPublished: boolean;
 }
 
-export const columns = [
+export const columns: ColumnDef<Course>[] = [
   {
     accessorKey: "title",
     header: ({ column }) => {

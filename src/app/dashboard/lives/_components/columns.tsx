@@ -1,6 +1,5 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -8,29 +7,26 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { cn } from "@/lib/utils";
+
 import { ArrowUpDown, MoreHorizontal, Pencil } from "lucide-react";
 import Link from "next/link";
+import { ColumnDef } from "@tanstack/react-table";
 
-export interface Live {
+interface Live {
   id: string;
   title: string;
   date: string;
   time: string;
 }
 
-export const columns = [
+export const columns: ColumnDef<Live>[] = [
   {
     accessorKey: "title",
-    header: ({ column }: { column: unknown }) => {
+    header: ({ column }) => {
       return (
         <Button
           variant="ghost"
-          onClick={() =>
-            (column as any).toggleSorting(
-              (column as any).getIsSorted() === "asc"
-            )
-          }
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Title <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -39,15 +35,11 @@ export const columns = [
   },
   {
     accessorKey: "date",
-    header: ({ column }: { column: unknown }) => {
+    header: ({ column }) => {
       return (
         <Button
           variant="ghost"
-          onClick={() =>
-            (column as any).toggleSorting(
-              (column as any).getIsSorted() === "asc"
-            )
-          }
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Date <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -56,15 +48,11 @@ export const columns = [
   },
   {
     accessorKey: "time",
-    header: ({ column }: { column: unknown }) => {
+    header: ({ column }) => {
       return (
         <Button
           variant="ghost"
-          onClick={() =>
-            (column as any).toggleSorting(
-              (column as any).getIsSorted() === "asc"
-            )
-          }
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Time <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
@@ -73,8 +61,8 @@ export const columns = [
   },
   {
     id: "actions",
-    cell: ({ row }: { row: unknown }) => {
-      const { id } = (row as any).original;
+    cell: ({ row }) => {
+      const { id } = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

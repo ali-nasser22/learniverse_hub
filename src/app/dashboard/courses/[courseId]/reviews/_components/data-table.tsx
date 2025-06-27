@@ -1,5 +1,16 @@
 "use client";
 import * as React from "react";
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+  getPaginationRowModel,
+  SortingState,
+  getSortedRowModel,
+  ColumnFiltersState,
+  getFilteredRowModel,
+} from "@tanstack/react-table";
 
 import {
   Table,
@@ -11,40 +22,41 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
-import { PlusCircle } from "lucide-react";
 
-interface DataTableProps {
-  columns: unknown[];
-  data: unknown[];
+interface DataTableProps<TData> {
+  columns: ColumnDef<TData>[];
+  data: TData[];
 }
 
-export function DataTable({ columns, data }: DataTableProps) {
-  const [sorting, setSorting] = React.useState<unknown[]>([]);
-  const [columnFilters, setColumnFilters] = React.useState<unknown[]>([]);
+export function DataTable<TData>({ columns, data }: DataTableProps<TData>) {
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
 
-  // Mock table object since we don't have react-table types
-  const table = {
-    getColumn: (key: string) => ({
-      getFilterValue: () => "",
-      setFilterValue: (value: string) => {},
-    }),
-    getHeaderGroups: () => [],
-    getRowModel: () => ({ rows: [] }),
-    previousPage: () => {},
-    nextPage: () => {},
-    getCanPreviousPage: () => false,
-    getCanNextPage: () => false,
-  };
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    onSortingChange: setSorting,
+    getSortedRowModel: getSortedRowModel(),
+    onColumnFiltersChange: setColumnFilters,
+    getFilteredRowModel: getFilteredRowModel(),
+    state: {
+      sorting,
+      columnFilters,
+    },
+  });
 
   return (
     <div>
       <div className="flex items-center justify-between py-4">
         <Input
           placeholder="Filter reviews..."
-          value={table.getColumn("review").getFilterValue()}
+          value={(table.getColumn("review")?.getFilterValue() as string) ?? ""}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-            table.getColumn("review").setFilterValue(event.target.value)
+            table.getColumn("review")?.setFilterValue(event.target.value)
           }
           className="max-w-sm"
         />
@@ -52,33 +64,38 @@ export function DataTable({ columns, data }: DataTableProps) {
       <div className="rounded-md border">
         <Table>
           <TableHeader>
-            {table.getHeaderGroups().map((headerGroup: any, index: number) => (
-              <TableRow key={index}>
-                {headerGroup.headers?.map(
-                  (header: any, headerIndex: number) => {
-                    return (
-                      <TableHead key={headerIndex}>
-                        {header.isPlaceholder
-                          ? null
-                          : header.column.columnDef.header}
-                      </TableHead>
-                    );
-                  }
-                )}
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
+                  );
+                })}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row: any, rowIndex: number) => (
-                <TableRow key={rowIndex}>
-                  {row
-                    .getVisibleCells?.()
-                    ?.map((cell: any, cellIndex: number) => (
-                      <TableCell key={cellIndex}>
-                        {cell.column.columnDef.cell}
-                      </TableCell>
-                    ))}
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
                 </TableRow>
               ))
             ) : (
