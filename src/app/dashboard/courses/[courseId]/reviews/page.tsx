@@ -45,8 +45,8 @@ const ReviewsPage = async ({ params }: ReviewPageProps) => {
 
   return (
     <div className="p-6">
-      <h2>
-        <strong>{course?.title}</strong> Reviews
+      <h2 className="text-2xl font-mono">
+        <span className="font-bold ">{course?.title}</span> Reviews
       </h2>
       <DataTable columns={columns} data={reviewDataSolved} />
     </div>

@@ -53,7 +53,7 @@ const EnrollmentsPage = async ({ params }: EnrollmentsPageProps) => {
         }
       });
     });
-    
+
     return {
       id: enrollment?.id as string,
       date: formatMyDate(
@@ -75,8 +75,8 @@ const EnrollmentsPage = async ({ params }: EnrollmentsPageProps) => {
 
   return (
     <div className="p-6">
-      <h2>
-        <strong>{course?.title}</strong> Enrollments
+      <h2 className="text-2xl font-mono">
+        <span className="font-bold ">{course?.title}</span> Enrollments
       </h2>
       <DataTable
         columns={columns}

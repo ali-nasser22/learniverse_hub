@@ -2,11 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, StarIcon } from "lucide-react";
 
 import { ColumnDef } from "@tanstack/react-table";
-
-
 
 interface Review {
   id: string;
@@ -15,11 +13,10 @@ interface Review {
   review: string;
 }
 
-
 export const columns: ColumnDef<Review>[] = [
   {
     id: "name",
-    accessorKey: 'student',
+    accessorKey: "student",
     header: ({ column }) => {
       return (
         <Button
@@ -41,6 +38,21 @@ export const columns: ColumnDef<Review>[] = [
         >
           Rating <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const rating = row.getValue("rating");
+      return (
+        <div className="flex items-center gap-2">
+          {Array.from({ length: rating as number }).map((_, index) => (
+            <StarIcon
+              key={index}
+              className="h-4 w-4"
+              fill="yellow"
+              stroke="black"
+            />
+          ))}
+        </div>
       );
     },
   },

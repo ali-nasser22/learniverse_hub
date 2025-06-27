@@ -79,7 +79,7 @@ export const columns: ColumnDef<Enrollment>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Enroll Date <ArrowUpDown className="ml-2 h-4 w-4" />
+          Enrollment Date <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
