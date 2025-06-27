@@ -3,6 +3,7 @@ import { IUser } from "./user-model";
 
 export interface ITestimonial extends Document {
   _id: Types.ObjectId;
+  id: string;
   content: string;
   rating: number;
   courseId: Types.ObjectId;

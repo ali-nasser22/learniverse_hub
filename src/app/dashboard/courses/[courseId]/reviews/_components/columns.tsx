@@ -6,21 +6,20 @@ import { ArrowUpDown } from "lucide-react";
 
 import { ColumnDef } from "@tanstack/react-table";
 
-interface Student {
-  name: string;
-}
+
 
 interface Review {
   id: string;
-  student: Student;
+  student: string;
   rating: number;
   review: string;
 }
 
+
 export const columns: ColumnDef<Review>[] = [
   {
     id: "name",
-    accessorKey: "student.name",
+    accessorKey: 'student',
     header: ({ column }) => {
       return (
         <Button

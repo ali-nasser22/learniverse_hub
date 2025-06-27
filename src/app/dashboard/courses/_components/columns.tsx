@@ -73,7 +73,7 @@ export const columns: ColumnDef<Course>[] = [
       const isPublished = row.getValue("isPublished") || false;
 
       return (
-        <Badge className={cn("bg-gray-500", isPublished && "bg-success")}>
+        <Badge className={cn("bg-gray-500", isPublished && "bg-green-500")}>
           {isPublished ? "Published" : "Unpublished"}
         </Badge>
       );
@@ -82,7 +82,7 @@ export const columns: ColumnDef<Course>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
-      const { id } = row.original;
+      const id = row.original.id;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

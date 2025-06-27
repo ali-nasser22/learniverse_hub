@@ -1,27 +1,54 @@
+import { getInstructorDashboardData } from "@/lib/dashboard-helper";
 import { columns } from "./_components/columns";
 import { DataTable } from "./_components/data-table";
-import { Review } from "./_components/columns";
+import { deepSerialize } from "@/lib/serialize";
+import { ITestimonial } from "../../../../../../model/testimonial-model";
+import { getUserById } from "../../../../../../queries/users";
+import { getCourseById } from "../../../../../../queries/courses";
 
-const reviews: Review[] = [
-  {
-    id: "1",
-    student: { name: "John Doe" },
-    review: "Nice Course, Thanks for the help",
-    rating: 5,
-  },
-  {
-    id: "2",
-    student: { name: "John Smilga" },
-    review: "Nice Course, Thanks for the help",
-    rating: 5,
-  },
-];
+interface ReviewPageProps {
+  params: {
+    courseId: string;
+  };
+}
+interface Review {
+  id: string;
+  content: string;
+  courseId: string;
+  rating: number;
+  student: string;
+  user: string;
+}
 
-const ReviewsPage = async () => {
+const ReviewsPage = async ({ params }: ReviewPageProps) => {
+  const { courseId } = await params;
+  const data = await getInstructorDashboardData();
+  const serializedData = deepSerialize(data);
+  const reviews = serializedData?.courseDetails?.reviews as ITestimonial[];
+
+  const reviewsForCourse = reviews.filter(
+    (review) => review?.courseId.toString() === courseId
+  ) as unknown as Review[];
+
+  const course = await getCourseById(courseId);
+
+  const reviewData = reviewsForCourse.map(async (review) => {
+    const user = await getUserById(review?.user);
+    return {
+      id: review?.id,
+      student: `${user?.firstName} ${user?.lastName}`,
+      review: review?.content,
+      rating: review?.rating,
+    };
+  });
+  const reviewDataSolved = await Promise.all(reviewData);
+
   return (
     <div className="p-6">
-      <h2>Think in a Redux way reviews</h2>
-      <DataTable columns={columns} data={reviews} />
+      <h2>
+        <strong>{course?.title}</strong> Reviews
+      </h2>
+      <DataTable columns={columns} data={reviewDataSolved} />
     </div>
   );
 };

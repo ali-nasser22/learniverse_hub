@@ -25,6 +25,7 @@ import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { PlusCircle } from "lucide-react";
 
+
 interface DataTableProps<TData> {
   columns: ColumnDef<TData>[];
   data: TData[];

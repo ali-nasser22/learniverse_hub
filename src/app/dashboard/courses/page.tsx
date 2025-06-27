@@ -1,26 +1,33 @@
 import { DataTable } from "./_components/data-table";
 import { columns } from "./_components/columns";
-import { Course } from "./_components/columns";
+import { getInstructorDashboardData } from "@/lib/dashboard-helper";
+import { deepSerialize } from "@/lib/serialize";
+import { ICourse } from "../../../../model/course-model";
 
-const courses: Course[] = [
-  {
-    id: "1",
-    title: "Reactive Accelerator",
-    price: 49,
-    isPublished: true,
-  },
-  {
-    id: "2",
-    title: "Think In A Redux Way",
-    price: 10,
-    isPublished: false,
-  },
-];
+interface Course {
+  id: string;
+  title: string;
+  price: number;
+  isPublished: boolean;
+}
 
 const CoursesPage = async () => {
+  const data = await getInstructorDashboardData();
+  const serializedData = deepSerialize(data);
+  const courseDetails = serializedData?.courseDetails?.courses as ICourse[];
+
+  const courses = courseDetails.map((course) => {
+    return {
+      id: course?._id.toString(),
+      title: course?.title,
+      price: course?.price,
+      isPublished: course?.active,
+    };
+  });
+
   return (
     <div className="p-6">
-      <DataTable columns={columns} data={courses} />
+      <DataTable columns={columns} data={courses as Course[]} />
     </div>
   );
 };
