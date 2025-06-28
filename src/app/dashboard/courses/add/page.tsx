@@ -15,15 +15,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { createNewCourse } from "@/app/actions/course";
+import { ICourse } from "../../../../../model/course-model";
 
 const formSchema = z.object({
   title: z.string().min(1, {
@@ -51,12 +46,14 @@ const AddCourse = () => {
 
   const onSubmit = async (values: FormValues) => {
     try {
-      router.push(`/dashboard/courses/${1}`);
+      const newCourse = await createNewCourse(values as ICourse);
+      const myCourse = JSON.parse(newCourse);
+      router.push(`/dashboard/courses/${myCourse?._id}`);
       toast.success("Course created");
     } catch (error) {
       toast.error("Something went wrong");
+      console.log(error);
     }
-    console.log(values);
   };
 
   return (

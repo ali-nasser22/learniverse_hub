@@ -17,6 +17,7 @@ import { Pencil } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { updateCourse } from "@/app/actions/course";
 
 const formSchema = z.object({
   title: z.string().min(1, {
@@ -51,8 +52,13 @@ export const TitleForm = ({ initialData = {}, courseId }: TitleFormProps) => {
   const onSubmit = async (values: FormValues) => {
     try {
       toggleEdit();
+      if (values.title !== initialData.title) {
+        await updateCourse(courseId, values);
+      }
+      toast.success("Course title updated successfully");
       router.refresh();
     } catch (error) {
+      console.error(error);
       toast.error("Something went wrong");
     }
   };

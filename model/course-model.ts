@@ -11,15 +11,15 @@ export interface ICourse extends MongoDocument {
   title: string;
   subtitle?: string;
   description: string;
-  thumbnail: string;
-  modules: IModule[];
+  thumbnail?: string;
+  modules?: IModule[];
   price: number;
   active: boolean;
-  category: ICategory;
+  category?: ICategory;
   instructor: IUser;
   testimonials?: ITestimonial[];
   quizSet?: Types.ObjectId;
-  learning: string[];
+  learning?: string[];
   createdOn: Date;
   modifiedOn: Date;
   __v?: number;
@@ -39,7 +39,7 @@ const CourseSchema = new Schema<ICourse>({
   },
   thumbnail: {
     type: String,
-    required: true,
+    required: false,
   },
   modules: [
     {
@@ -50,15 +50,16 @@ const CourseSchema = new Schema<ICourse>({
   price: {
     type: Number,
     required: true,
+    default: 0,
   },
   active: {
     type: Boolean,
-    default: true,
+    default: false,
   },
   category: {
     type: Schema.Types.ObjectId,
     ref: "Category",
-    required: true,
+    required: false,
   },
   instructor: {
     type: Schema.Types.ObjectId,
@@ -77,7 +78,7 @@ const CourseSchema = new Schema<ICourse>({
   },
   learning: [
     {
-      required: true,
+      required: false,
       type: String,
     },
   ],

@@ -26,7 +26,9 @@ function groupBy<T>(array: T[], keyGetter: (item: T) => string) {
 }
 
 export async function getCourseList() {
-  const courses = await Course.find({})
+  const courses = await Course.find({
+    active: true,
+  })
     .select([
       "title",
       "subtitle",
@@ -149,5 +151,15 @@ export async function getCoursesByInstructor(instructorId: string) {
   } catch (error) {
     console.error(error);
     return [];
+  }
+}
+
+export async function createCourse(course: ICourse) {
+  try {
+    const newCourse = await Course.create(course);
+    return JSON.stringify(newCourse);
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to create course");
   }
 }

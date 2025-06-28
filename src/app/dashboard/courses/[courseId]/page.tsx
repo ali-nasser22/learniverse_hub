@@ -1,10 +1,5 @@
 import { IconBadge } from "@/components/icon-badge";
-import {
-  CircleDollarSign,
-  File,
-  LayoutDashboard,
-  ListChecks,
-} from "lucide-react";
+import { CircleDollarSign, LayoutDashboard, ListChecks } from "lucide-react";
 import { CategoryForm } from "./_components/category-form";
 import { DescriptionForm } from "./_components/description-form";
 import { ImageForm } from "./_components/image-form";
@@ -14,14 +9,25 @@ import { TitleForm } from "./_components/title-form";
 import { CourseActions } from "./_components/course-action";
 import AlertBanner from "../../../../components/banner";
 import { QuizSetForm } from "./_components/quiz-set-form";
+import { getCourseById } from "../../../../../queries/courses";
 
-const EditCourse = () => {
+interface EditCourseProps {
+  params: Promise<{
+    courseId: string;
+  }>;
+}
+
+const EditCourse = async ({ params }: EditCourseProps) => {
+  const courseId = (await params).courseId;
+  const course = await getCourseById(courseId);
   return (
     <>
-      <AlertBanner
-        label="This course is unpublished. It will not be visible in the course."
-        variant="warning"
-      />
+      {!course?.active && (
+        <AlertBanner
+          label="This course is unpublished. It will not be visible in the courses list."
+          variant="warning"
+        />
+      )}
       <div className="p-6">
         <div className="flex items-center justify-end">
           <CourseActions />
@@ -34,11 +40,16 @@ const EditCourse = () => {
             </div>
             <TitleForm
               initialData={{
-                title: "Reactive Accelerator",
+                title: course?.title,
               }}
-              courseId="1"
+              courseId={courseId}
             />
-            <DescriptionForm initialData={{}} courseId="1" />
+            <DescriptionForm
+              initialData={{
+                description: course?.description,
+              }}
+              courseId={courseId}
+            />
             <ImageForm initialData={{}} courseId="1" />
             <CategoryForm initialData={{}} courseId="1" />
             <QuizSetForm initialData={{}} courseId="1" />
