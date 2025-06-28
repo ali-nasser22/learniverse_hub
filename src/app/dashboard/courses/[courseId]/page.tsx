@@ -67,7 +67,12 @@ const EditCourse = async ({ params }: EditCourseProps) => {
               }}
               courseId={courseId}
             />
-            <ImageForm initialData={{}} courseId="1" />
+            <ImageForm
+              initialData={{
+                imageUrl: course?.thumbnail,
+              }}
+              courseId={courseId}
+            />
             <CategoryForm
               initialData={{
                 options: mappedCategories,

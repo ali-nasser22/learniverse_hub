@@ -40,7 +40,7 @@ export default async function EnrolledCourseCard({
     >
       <div className="relative w-full aspect-video rounded-md overflow-hidden">
         <Image
-          src={`/assets/images/courses/${course.thumbnail}`}
+          src={course.thumbnail as string}
           alt={course.title}
           className="object-cover"
           width={500}
@@ -63,7 +63,7 @@ export default async function EnrolledCourseCard({
         <div className="border-b pb-2 mb-2">
           <div className="flex items-center justify-between">
             <span className="text-md md:text-sm font-medium text-slate-700">
-              Total Modules: {course?.modules.length}
+              Total Modules: {course?.modules?.length ?? 0}
             </span>
             <div className="text-md md:text-sm font-medium text-slate-700">
               Completed Modules{" "}

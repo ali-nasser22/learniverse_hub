@@ -17,7 +17,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
         <div className="group hover:shadow-sm transition overflow-hidden border rounded-lg p-3 h-full">
           <div className="relative w-full aspect-video rounded-md overflow-hidden">
             <Image
-              src={`/assets/images/courses/${course?.thumbnail}`}
+              src={course?.thumbnail as string}
               alt={"course"}
               className="object-cover"
               fill
