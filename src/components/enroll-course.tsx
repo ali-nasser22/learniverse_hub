@@ -14,6 +14,7 @@ const EnrollCourse = ({ asLink, courseId }: EnrollCourseProps) => {
     const { url } = await createCheckoutSession(courseId);
     window.location.assign(url as string);
   };
+  
   return (
     <>
       <form action={() => handleEnroll(courseId as string)}>

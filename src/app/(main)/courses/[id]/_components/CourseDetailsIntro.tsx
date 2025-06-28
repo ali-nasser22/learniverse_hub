@@ -90,7 +90,7 @@ const CourseDetailsIntro = async ({ params }: CourseDetailsIntroProps) => {
       );
     }
 
-    console.log("Course loaded successfully:", course.title);
+    
 
     return (
       <div className="overflow-x-hidden grainy">
@@ -111,7 +111,7 @@ const CourseDetailsIntro = async ({ params }: CourseDetailsIntroProps) => {
                 </p>
 
                 <div className="mt-6 flex items-center justify-center flex-wrap gap-3">
-                  <EnrollCourse asLink={false} />
+                  <EnrollCourse asLink={false} courseId={course.id} />
                   <Link
                     href={`/courses/${resolvedParams.id}/preview`}
                     className={cn(
