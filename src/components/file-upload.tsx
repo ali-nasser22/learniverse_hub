@@ -17,8 +17,6 @@ export const UploadDropzone = (props: UploadDropzoneProps) => {
 
   const [droppedFiles, setDroppedFiles] = useState<File[] | null>(null);
 
-  console.log(droppedFiles);
-
   const [isUploading, setIsUploading] = useState(false);
 
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -40,49 +38,50 @@ export const UploadDropzone = (props: UploadDropzoneProps) => {
     return interval;
   };
 
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    setIsUploading(true);
-    const progressInterval = startSimulatedProgress();
-    setDroppedFiles(acceptedFiles);
+  const onDrop = useCallback(
+    async (acceptedFiles: File[]) => {
+      setIsUploading(true);
+      const progressInterval = startSimulatedProgress();
+      setDroppedFiles(acceptedFiles);
 
-    try {
-      const file = acceptedFiles[0]; // Take first file
-      const formData = new FormData();
-      formData.append('file', file);
+      try {
+        const file = acceptedFiles[0]; // Take first file
+        const formData = new FormData();
+        formData.append("file", file);
 
-      const response = await fetch('/api/upload-image', {
-        method: 'POST',
-        body: formData,
-      });
+        const response = await fetch("/api/upload-image", {
+          method: "POST",
+          body: formData,
+        });
 
-      const result = await response.json();
+        const result = await response.json();
 
-      if (result.success) {
-        setUploadProgress(100);
-        toast.success('Image uploaded successfully!');
-        console.log('Image URL:', result.imageUrl);
-        
-        // Call the callback function if provided
-        if (onUploadComplete) {
-          onUploadComplete(result.imageUrl, result.imageId);
+        if (result.success) {
+          setUploadProgress(100);
+          toast.success("Image uploaded successfully!");
+
+          // Call the callback function if provided
+          if (onUploadComplete) {
+            onUploadComplete(result.imageUrl, result.imageId);
+          }
+        } else {
+          toast.error("Upload failed");
         }
-      } else {
-        toast.error('Upload failed');
+      } catch (error) {
+        toast.error("Upload failed");
+      } finally {
+        clearInterval(progressInterval);
+        setIsUploading(false);
       }
-    } catch (error) {
-      toast.error('Upload failed');
-      console.error('Upload error:', error);
-    } finally {
-      clearInterval(progressInterval);
-      setIsUploading(false);
-    }
-  }, [onUploadComplete]);
+    },
+    [onUploadComplete]
+  );
 
   const { getRootProps, getInputProps, fileRejections } = useDropzone({
     onDrop,
-    accept: { 'image/jpeg': [], 'image/png': [], 'image/webp': [] },
+    accept: { "image/jpeg": [], "image/png": [], "image/webp": [] },
     multiple: isMulti,
-    maxSize: 50 * 1024 * 1024, // 50MB
+    maxSize: 5 * 1024 * 1024, // 5MB
   });
 
   useEffect(() => {
@@ -109,9 +108,11 @@ export const UploadDropzone = (props: UploadDropzoneProps) => {
             Click to upload
           </span>{" "}
           or drag and drop <br />
-          Maximum file size 50 MB.
+          Maximum file size 5 MB.
         </h4>
-        <p className="text-sm">Only JPEG, PNG and WebP images will be accepted</p>
+        <p className="text-sm">
+          Only JPEG, PNG and WebP images will be accepted
+        </p>
         {isUploading ? (
           <div className="mx-auto mt-4 w-full max-w-xs">
             <Progress
