@@ -32,6 +32,7 @@ const CourseSchema = new Schema<ICourse>({
   },
   subtitle: {
     type: String,
+    default: "",
   },
   description: {
     type: String,
@@ -60,6 +61,7 @@ const CourseSchema = new Schema<ICourse>({
     type: Schema.Types.ObjectId,
     ref: "Category",
     required: false,
+    default: null,
   },
   instructor: {
     type: Schema.Types.ObjectId,

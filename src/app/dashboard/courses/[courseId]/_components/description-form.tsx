@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 import { Pencil } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { updateCourse } from "@/app/actions/course";
 
 const formSchema = z.object({
   description: z.string().min(1, {
@@ -55,10 +56,14 @@ export const DescriptionForm = ({
 
   const onSubmit = async (values: FormValues) => {
     try {
-      toast.success("Course updated");
       toggleEdit();
+      if (values.description !== initialData.description) {
+        await updateCourse(courseId, values);
+      }
+      toast.success("Course description updated successfully");
       router.refresh();
     } catch (error) {
+      console.error(error);
       toast.error("Something went wrong");
     }
   };

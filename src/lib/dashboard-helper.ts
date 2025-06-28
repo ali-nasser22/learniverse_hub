@@ -2,6 +2,7 @@ import { auth } from "../../auth";
 import { getCourseDetailsByInstructor } from "../../queries/courses";
 import { getUserByEmail } from "../../queries/users";
 
+
 export async function getInstructorDashboardData() {
   try {
     const session = await auth();
@@ -19,3 +20,4 @@ export async function getInstructorDashboardData() {
     console.error("Error fetching instructor dashboard data:", error);
   }
 }
+

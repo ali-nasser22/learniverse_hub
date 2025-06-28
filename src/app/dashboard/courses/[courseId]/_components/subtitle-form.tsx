@@ -1,11 +1,9 @@
 "use client";
 
+import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
 
-import { Button } from "@/components/ui/button";
-import { Combobox } from "@/components/ui/combobox";
 import {
   Form,
   FormControl,
@@ -13,35 +11,35 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { updateCourse } from "@/app/actions/course";
 
 const formSchema = z.object({
-  categoryId: z.string().min(1),
+  subtitle: z.string().min(1, {
+    message: "Subtitle is required",
+  }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
-interface Option {
-  value: string;
-  label: string;
-}
-
 interface InitialData {
-  categoryId?: string;
-  options: Option[];
+  subtitle?: string;
 }
 
-interface CategoryFormProps {
-  initialData: InitialData;
+interface SubtitleFormProps {
+  initialData?: InitialData;
   courseId: string;
 }
 
-export const CategoryForm = ({ initialData, courseId }: CategoryFormProps) => {
+export const SubtitleForm = ({
+  initialData = {},
+  courseId,
+}: SubtitleFormProps) => {
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
 
@@ -49,58 +47,41 @@ export const CategoryForm = ({ initialData, courseId }: CategoryFormProps) => {
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      categoryId: initialData?.categoryId || "",
-    },
+    defaultValues: initialData,
   });
 
   const { isSubmitting, isValid } = form.formState;
 
   const onSubmit = async (values: FormValues) => {
     try {
-      if (values.categoryId !== initialData.categoryId) {
-        await updateCourse(courseId, {
-          category: values.categoryId,
-        });
-      }
-      toast.success("Course updated");
       toggleEdit();
+      if (values.subtitle !== initialData.subtitle) {
+        await updateCourse(courseId, values);
+      }
+      toast.success("Course subtitle updated successfully");
       router.refresh();
     } catch (error) {
-      console.log(error);
+      console.error(error);
       toast.error("Something went wrong");
     }
   };
 
-  const selectedOptions = initialData?.options?.find(
-    (option) => option.value === initialData.categoryId
-  );
-
   return (
     <div className="mt-6 border bg-gray-50 rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
-        Course Category
+        Course Subtitle
         <Button variant="ghost" onClick={toggleEdit}>
           {isEditing ? (
             <>Cancel</>
           ) : (
             <>
               <Pencil className="h-4 w-4 mr-2" />
-              Edit Category
+              Edit Subtitle
             </>
           )}
         </Button>
       </div>
-      {!isEditing && (
-        <p
-          className={cn(
-            "text-sm mt-2",
-            !initialData.categoryId && "text-slate-500 italic"
-          )}
-        >
-          {selectedOptions?.label || "No category selected"}
-        </p>
-      )}
+      {!isEditing && <p className="text-sm mt-2">{initialData.subtitle}</p>}
       {isEditing && (
         <Form {...form}>
           <form
@@ -109,11 +90,15 @@ export const CategoryForm = ({ initialData, courseId }: CategoryFormProps) => {
           >
             <FormField
               control={form.control}
-              name="categoryId"
+              name="subtitle"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Combobox options={initialData?.options} {...field} />
+                    <Input
+                      disabled={isSubmitting}
+                      placeholder="e.g. 'Learn how to build a web application'"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

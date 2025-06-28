@@ -19,9 +19,12 @@ import { Pencil } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { updateCourse } from "@/app/actions/course";
 
 const formSchema = z.object({
-  price: z.coerce.number(),
+  price: z.number().min(0, {
+    message: "Price must be greater than 0",
+  }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -44,7 +47,7 @@ export const PriceForm = ({ initialData, courseId }: PriceFormProps) => {
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      price: initialData?.price || undefined,
+      price: initialData?.price ?? 0,
     },
   });
 
@@ -52,10 +55,14 @@ export const PriceForm = ({ initialData, courseId }: PriceFormProps) => {
 
   const onSubmit = async (values: FormValues) => {
     try {
-      toast.success("Course updated");
       toggleEdit();
+      if (values.price !== initialData.price) {
+        await updateCourse(courseId, values);
+      }
+      toast.success("Course price updated successfully");
       router.refresh();
     } catch (error) {
+      console.error(error);
       toast.error("Something went wrong");
     }
   };
@@ -103,6 +110,14 @@ export const PriceForm = ({ initialData, courseId }: PriceFormProps) => {
                       disabled={isSubmitting}
                       placeholder="Set a price for your course"
                       {...field}
+                      value={field.value?.toString() || ""}
+                      onChange={(e) => {
+                        const value = e.target.value;
+
+                        field.onChange(
+                          value === "" ? 0 : parseFloat(value) || 0
+                        );
+                      }}
                     />
                   </FormControl>
                   <FormMessage />

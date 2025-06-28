@@ -10,6 +10,11 @@ import { CourseActions } from "./_components/course-action";
 import AlertBanner from "../../../../components/banner";
 import { QuizSetForm } from "./_components/quiz-set-form";
 import { getCourseById } from "../../../../../queries/courses";
+import { SubtitleForm } from "./_components/subtitle-form";
+import {
+  getCategoryById,
+  getCategoryList,
+} from "../../../../../queries/categories";
 
 interface EditCourseProps {
   params: Promise<{
@@ -20,6 +25,12 @@ interface EditCourseProps {
 const EditCourse = async ({ params }: EditCourseProps) => {
   const courseId = (await params).courseId;
   const course = await getCourseById(courseId);
+  const categories = await getCategoryList();
+  const category = await getCategoryById(course?.category as unknown as string);
+  const mappedCategories = categories.map((category) => ({
+    value: category?.id,
+    label: category?.title,
+  }));
   return (
     <>
       {!course?.active && (
@@ -44,6 +55,12 @@ const EditCourse = async ({ params }: EditCourseProps) => {
               }}
               courseId={courseId}
             />
+            <SubtitleForm
+              initialData={{
+                subtitle: course?.subtitle,
+              }}
+              courseId={courseId}
+            />
             <DescriptionForm
               initialData={{
                 description: course?.description,
@@ -51,7 +68,13 @@ const EditCourse = async ({ params }: EditCourseProps) => {
               courseId={courseId}
             />
             <ImageForm initialData={{}} courseId="1" />
-            <CategoryForm initialData={{}} courseId="1" />
+            <CategoryForm
+              initialData={{
+                options: mappedCategories,
+                categoryId: category?.id,
+              }}
+              courseId={courseId}
+            />
             <QuizSetForm initialData={{}} courseId="1" />
           </div>
           <div className="space-y-6">
@@ -67,7 +90,12 @@ const EditCourse = async ({ params }: EditCourseProps) => {
                 <IconBadge icon={CircleDollarSign} />
                 <h2 className="text-xl">Sell your course</h2>
               </div>
-              <PriceForm initialData={{}} courseId="1" />
+              <PriceForm
+                initialData={{
+                  price: course?.price,
+                }}
+                courseId={courseId}
+              />
             </div>
           </div>
         </div>
