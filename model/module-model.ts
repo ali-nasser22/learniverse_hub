@@ -4,6 +4,7 @@ import { ILesson } from "./lesson-model";
 
 export interface IModule extends Document {
   _id: Types.ObjectId;
+  id?:string
   title: string;
   description?: string;
   status: string;
@@ -46,6 +47,7 @@ const ModuleSchema = new Schema<IModule>({
   duration: {
     type: Number,
     required: false,
+    default: 0,
   },
   order: {
     type: Number,

@@ -1,16 +1,14 @@
-import AlertBanner from "../../../../../../components/alert-banner";
+import AlertBanner from "../../../../../../components/banner";
 import { IconBadge } from "../../../../../../components/icon-badge";
-import {
-  ArrowLeft,
-  BookOpenCheck,
-  Eye,
-  LayoutDashboard,
-  Video,
-} from "lucide-react";
+import { ArrowLeft, BookOpenCheck, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 import { ModuleTitleForm } from "./_components/module-title-form";
 import { LessonForm } from "./_components/lesson-form";
 import { CourseActions } from "../../_components/course-action";
+import { getCourseById } from "../../../../../../../queries/courses";
+import { getModuleById } from "../../../../../../../queries/modules";
+import { serializeDocuments } from "@/lib/serialize";
+import { ILesson } from "../../../../../../../model/lesson-model";
 
 interface ModuleParams {
   courseId: string;
@@ -22,18 +20,27 @@ interface ModulePageProps {
 }
 
 const Module = async ({ params }: ModulePageProps) => {
+  const { courseId, moduleId } = await params;
+  const course = await getCourseById(courseId);
+  const myModule = await getModuleById(moduleId);
+  const lessons = serializeDocuments(
+    myModule?.lessonIds as ILesson[]
+  ) as unknown as ILesson[];
+
   return (
     <>
-      <AlertBanner
-        label="This module is unpublished. It will not be visible in the course."
-        variant="warning"
-      />
+      {myModule?.status !== "published" && (
+        <AlertBanner
+          label="This module is unpublished. It will not be visible in the course."
+          variant="warning"
+        />
+      )}
 
       <div className="p-6">
         <div className="flex items-center justify-between">
           <div className="w-full">
             <Link
-              href={`/dashboard/courses/${1}`}
+              href={`/dashboard/courses/${courseId}`}
               className="flex items-center text-sm hover:opacity-75 transition mb-6"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
@@ -51,14 +58,25 @@ const Module = async ({ params }: ModulePageProps) => {
                 <IconBadge icon={LayoutDashboard} />
                 <h2 className="text-xl">Customize Your module</h2>
               </div>
-              <ModuleTitleForm initialData={{}} courseId="1" chapterId="1" />
+              <ModuleTitleForm
+                initialData={{
+                  title: myModule?.title,
+                }}
+                courseId={course?.id as string}
+                moduleId={moduleId}
+              />
             </div>
             <div>
               <div className="flex items-center gap-x-2">
                 <IconBadge icon={BookOpenCheck} />
                 <h2 className="text-xl">Module Lessons</h2>
               </div>
-              <LessonForm initialData={{}} courseId="1" />
+              <LessonForm
+                initialData={{
+                  lessons: lessons,
+                }}
+                moduleId={moduleId}
+              />
             </div>
           </div>
           <div>

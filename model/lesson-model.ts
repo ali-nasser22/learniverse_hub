@@ -3,7 +3,8 @@ import { IModule } from "./module-model";
 import { MongoDocument } from "@/lib/convertData";
 
 export interface ILesson extends MongoDocument {
-  id: string;
+  id?: string;
+  _id: string;
   title: string;
   description: string;
   duration: number; // duration in seconds
@@ -12,9 +13,7 @@ export interface ILesson extends MongoDocument {
   slug: string;
   access: "public" | "private";
   module?: IModule; // Reference to parent module
-  order?: number; // Order within the module
-  resources?: string[]; // Additional resources URLs
-  transcript?: string; // Video transcript
+  order: number; // Order within the module
   createdOn: Date;
   modifiedOn: Date;
   __v?: number;
@@ -27,15 +26,16 @@ const LessonSchema = new Schema<ILesson>({
   },
   description: {
     type: String,
-    required: true,
+    required: false,
   },
   duration: {
     type: Number,
-    required: true,
+    required: false,
+    default: 0,
   },
   video_url: {
     type: String,
-    required: true,
+    required: false,
   },
   published: {
     type: Boolean,
@@ -45,11 +45,14 @@ const LessonSchema = new Schema<ILesson>({
     type: String,
     required: true,
   },
+  order: {
+    type: Number,
+    required: true,
+  },
   access: {
     type: String,
     enum: ["public", "private"],
     default: "private",
-    required: true,
   },
 });
 

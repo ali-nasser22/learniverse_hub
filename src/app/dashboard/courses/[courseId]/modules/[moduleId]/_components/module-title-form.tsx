@@ -17,6 +17,8 @@ import { Pencil } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { updateModule } from "../../../../../../actions/module";
+import { getSlug } from "@/lib/slug";
 
 const formSchema = z.object({
   title: z.string().min(1),
@@ -31,13 +33,13 @@ interface InitialData {
 interface ModuleTitleFormProps {
   initialData: InitialData;
   courseId: string;
-  chapterId: string;
+  moduleId: string;
 }
 
 export const ModuleTitleForm = ({
   initialData,
   courseId,
-  chapterId,
+  moduleId,
 }: ModuleTitleFormProps) => {
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
@@ -46,13 +48,23 @@ export const ModuleTitleForm = ({
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: initialData,
+    defaultValues: {
+      title: initialData.title || "",
+    },
   });
 
   const { isSubmitting, isValid } = form.formState;
 
   const onSubmit = async (values: FormValues) => {
     try {
+      if (initialData.title === values.title) return;
+
+      const updatedValues = {
+        ...values,
+        slug: getSlug(values.title),
+      };
+
+      const myModule = await updateModule(updatedValues, moduleId);
       toast.success("Module title updated");
       toggleEdit();
       router.refresh();
@@ -76,7 +88,7 @@ export const ModuleTitleForm = ({
           )}
         </Button>
       </div>
-      {!isEditing && <p className="text-sm mt-2">{"Reactive Accelerator"}</p>}
+      {!isEditing && <p className="text-sm mt-2">{initialData?.title}</p>}
       {isEditing && (
         <Form {...form}>
           <form
@@ -89,11 +101,7 @@ export const ModuleTitleForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input
-                      disabled={isSubmitting}
-                      placeholder="e.g. 'Introduction to the course'"
-                      {...field}
-                    />
+                    <Input disabled={isSubmitting} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -1,10 +1,10 @@
 "use server";
 
 import { createModule } from "../../../queries/modules";
-import { Types } from "mongoose";
+import { Types, UpdateQuery } from "mongoose";
 import { Course } from "../../../model/course-model";
 import { revalidatePath } from "next/cache";
-import { Module } from "../../../model/module-model";
+import { IModule, Module } from "../../../model/module-model";
 
 export async function createNewModule(formData: FormData) {
   try {
@@ -53,5 +53,16 @@ export async function reorderModules(
   } catch (error) {
     console.error("Error reordering modules:", error);
     throw new Error("Failed to reorder modules");
+  }
+}
+export async function updateModule(data: unknown, moduleId: string) {
+  try {
+    const myModule = await Module.findByIdAndUpdate(
+      moduleId,
+      data as unknown as UpdateQuery<IModule>
+    );
+    return JSON.parse(JSON.stringify(myModule));
+  } catch (error) {
+    throw new Error(error as string);
   }
 }
