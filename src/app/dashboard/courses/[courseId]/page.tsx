@@ -15,6 +15,8 @@ import {
   getCategoryById,
   getCategoryList,
 } from "../../../../../queries/categories";
+import { serializeDocument } from "@/lib/serialize";
+import { IModule } from "../../../../../model/module-model";
 
 interface EditCourseProps {
   params: Promise<{
@@ -31,6 +33,9 @@ const EditCourse = async ({ params }: EditCourseProps) => {
     value: category?.id,
     label: category?.title,
   }));
+  const rowModules = course?.modules?.sort((a, b) => a.order - b.order);
+  const modules = serializeDocument(rowModules || []) as unknown as IModule[];
+
   return (
     <>
       {!course?.active && (
@@ -88,7 +93,7 @@ const EditCourse = async ({ params }: EditCourseProps) => {
                 <IconBadge icon={ListChecks} />
                 <h2 className="text-xl">Course Modules</h2>
               </div>
-              <ModulesForm initialData={{}} courseId="1" />
+              <ModulesForm initialData={{ modules }} courseId={courseId} />
             </div>
             <div>
               <div className="flex items-center gap-x-2">

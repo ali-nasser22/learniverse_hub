@@ -1,15 +1,17 @@
 import mongoose, { Schema, model, Document, Types } from "mongoose";
 import { ICourse } from "./course-model";
+import { ILesson } from "./lesson-model";
 
 export interface IModule extends Document {
   _id: Types.ObjectId;
   title: string;
-  description: string;
+  description?: string;
   status: string;
   slug: string;
   course: ICourse;
-  lessonIds: Types.ObjectId[];
-  duration: number;
+  lessonIds?: ILesson[];
+  duration?: number;
+  order:number
 }
 
 const ModuleSchema = new Schema<IModule>({
@@ -19,11 +21,13 @@ const ModuleSchema = new Schema<IModule>({
   },
   description: {
     type: String,
-    required: true,
+    required: false,
+    default: "",
   },
   status: {
     type: String,
-    required: true,
+    required: false,
+    default: "draft",
   },
   slug: {
     type: String,
@@ -32,7 +36,6 @@ const ModuleSchema = new Schema<IModule>({
   course: {
     type: Schema.Types.ObjectId,
     ref: "Course",
-    required: true,
   },
   lessonIds: [
     {
@@ -41,6 +44,10 @@ const ModuleSchema = new Schema<IModule>({
     },
   ],
   duration: {
+    type: Number,
+    required: false,
+  },
+  order: {
     type: Number,
     required: true,
   },

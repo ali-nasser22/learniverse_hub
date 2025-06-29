@@ -19,6 +19,9 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { ModuleList } from "./module-list";
+import { IModule } from "../../../../../../model/module-model";
+import { createNewModule, reorderModules } from "@/app/actions/module";
+import { getSlug } from "@/lib/slug";
 
 const formSchema = z.object({
   title: z.string().min(1),
@@ -26,14 +29,8 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-interface Module {
-  id: string;
-  title: string;
-  isPublished?: boolean;
-}
-
 interface InitialData {
-  modules?: Module[];
+  modules?: IModule[];
 }
 
 interface ModulesFormProps {
@@ -46,68 +43,78 @@ interface UpdateData {
   position: number;
 }
 
-const initialModules: Module[] = [
-  {
-    id: "1",
-    title: "Module 1",
-    isPublished: true,
-  },
-  {
-    id: "2",
-    title: "Module 2",
-  },
-];
-
 export const ModulesForm = ({ initialData, courseId }: ModulesFormProps) => {
-  const [modules, setModules] = useState<Module[]>(initialModules);
-  const router = useRouter();
+  const [modules, setModules] = useState<IModule[]>(initialData.modules || []);
   const [isCreating, setIsCreating] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  const toggleCreating = () => setIsCreating((current) => !current);
+  const router = useRouter();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      title: "",
-    },
+    defaultValues: { title: "" },
   });
 
   const { isSubmitting, isValid } = form.formState;
 
+  const toggleCreating = () => {
+    setIsCreating((current) => !current);
+    if (isCreating) {
+      form.reset();
+    }
+  };
+
   const onSubmit = async (values: FormValues) => {
     try {
-      setModules((modules) => [
-        ...modules,
-        {
-          id: Date.now().toString(),
-          title: values.title,
-        },
-      ]);
+      const formData = new FormData();
+      formData.append("title", values.title);
+      formData.append("courseId", courseId);
+      formData.append("slug", getSlug(values.title) || "");
+      formData.append("order", (modules.length + 1).toString());
+      const newModule = await createNewModule(formData);
+
+      setModules((prev) => [...prev, newModule as IModule]);
       toast.success("Module created");
+      form.reset();
       toggleCreating();
       router.refresh();
     } catch (error) {
+      console.error("Error creating module:", error);
       toast.error("Something went wrong");
     }
   };
 
   const onReorder = async (updateData: UpdateData[]) => {
-    console.log({ updateData });
     try {
       setIsUpdating(true);
 
-      toast.success("Chapters reordered");
-      router.refresh();
-    } catch {
+      const reorderedModules = [...modules];
+      updateData.forEach(({ id, position }) => {
+        const moduleIndex = reorderedModules.findIndex((m) => m.id === id);
+        if (moduleIndex !== -1) {
+          reorderedModules[moduleIndex].order = position+1;
+        }
+      });
+
+      
+      reorderedModules.sort((a, b) => (a.order || 0) - (b.order || 0));
+      setModules(reorderedModules);
+
+      await reorderModules(courseId, updateData);
+
+      toast.success("Modules reordered");
+    } catch (error) {
+      console.error("Error reordering modules:", error);
       toast.error("Something went wrong");
+      // Revert local state on error
+      setModules(initialData.modules || []);
     } finally {
       setIsUpdating(false);
     }
   };
 
   const onEdit = (id: string) => {
-    router.push(`/dashboard/courses/1/modules/${1}`);
+    router.push(`/dashboard/courses/${courseId}/modules/${id}`);
   };
 
   return (
@@ -117,6 +124,7 @@ export const ModulesForm = ({ initialData, courseId }: ModulesFormProps) => {
           <Loader2 className="animate-spin h-6 w-6 text-sky-700" />
         </div>
       )}
+
       <div className="font-medium flex items-center justify-between">
         Course Modules
         <Button variant="ghost" onClick={toggleCreating}>
@@ -159,6 +167,7 @@ export const ModulesForm = ({ initialData, courseId }: ModulesFormProps) => {
           </form>
         </Form>
       )}
+
       {!isCreating && (
         <div
           className={cn(
@@ -174,6 +183,7 @@ export const ModulesForm = ({ initialData, courseId }: ModulesFormProps) => {
           />
         </div>
       )}
+
       {!isCreating && (
         <p className="text-xs text-muted-foreground mt-4">
           Drag & Drop to reorder the modules

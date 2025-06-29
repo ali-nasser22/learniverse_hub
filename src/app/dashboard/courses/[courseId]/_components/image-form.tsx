@@ -86,8 +86,10 @@ export const ImageForm = ({ initialData, courseId }: ImageFormProps) => {
           <div className="relative aspect-video mt-2">
             <Image
               alt="Upload"
-              fill
+              width={550}
+              height={500}
               className="object-cover rounded-md"
+              priority
               src={currentImageUrl}
             />
           </div>
