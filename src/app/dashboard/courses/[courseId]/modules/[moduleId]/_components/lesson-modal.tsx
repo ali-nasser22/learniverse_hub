@@ -14,8 +14,8 @@ import { LessonTitleForm } from "./lesson-title-form";
 import { LessonDescriptionForm } from "./lesson-description-form";
 import { LessonAccessForm } from "./lesson-access-form";
 import { VideoUrlForm } from "./video-url-form";
-import { CourseActions } from "../../../_components/course-action";
 import { ILesson } from "../../../../../../../../model/lesson-model";
+import { LessonActions } from "./lesson-action";
 
 interface LessonModalProps {
   open: boolean;
@@ -34,7 +34,7 @@ export const LessonModal = ({
   // onUpdate,
   // onDelete,
 }: LessonModalProps) => {
-  console.log(lesson);
+
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -55,7 +55,7 @@ export const LessonModal = ({
         <div className="flex items-center justify-between">
           <div className="w-full">
             <div className="flex items-center justify-end">
-              <CourseActions />
+              <LessonActions lesson={lesson} moduleId={moduleId} />
             </div>
           </div>
         </div>

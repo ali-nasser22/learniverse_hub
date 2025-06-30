@@ -4,11 +4,12 @@ import { ArrowLeft, BookOpenCheck, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 import { ModuleTitleForm } from "./_components/module-title-form";
 import { LessonForm } from "./_components/lesson-form";
-import { CourseActions } from "../../_components/course-action";
 import { getCourseById } from "../../../../../../../queries/courses";
 import { getModuleById } from "../../../../../../../queries/modules";
-import { serializeDocuments } from "@/lib/serialize";
+import { serializeDocument, serializeDocuments } from "@/lib/serialize";
 import { ILesson } from "../../../../../../../model/lesson-model";
+import { ModuleActions } from "../../_components/module-action";
+import { IModule } from "../../../../../../../model/module-model";
 
 interface ModuleParams {
   courseId: string;
@@ -26,6 +27,10 @@ const Module = async ({ params }: ModulePageProps) => {
   const lessons = serializeDocuments(
     myModule?.lessonIds as ILesson[]
   ) as unknown as ILesson[];
+
+  const serializedModule = serializeDocument(
+    myModule as unknown as IModule
+  ) as unknown as IModule;
 
   return (
     <>
@@ -47,7 +52,7 @@ const Module = async ({ params }: ModulePageProps) => {
               Back to course setup
             </Link>
             <div className="flex items-center justify-end">
-              <CourseActions />
+              <ModuleActions module={serializedModule} />
             </div>
           </div>
         </div>

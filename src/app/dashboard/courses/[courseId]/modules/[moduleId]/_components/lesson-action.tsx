@@ -2,45 +2,53 @@
 
 import { Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ICourse } from "../../../../../../model/course-model";
-import { deleteCourse, updateCourse } from "@/app/actions/course";
+import { ILesson } from "../../../../../../../../model/lesson-model";
+import { deleteLesson, updateLesson } from "@/app/actions/lesson";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
-interface CourseActionsProps {
-  course: ICourse;
+interface LessonActionsProps {
+  lesson: ILesson;
+  moduleId: string;
 }
 
-export const CourseActions = ({ course }: CourseActionsProps) => {
+export const LessonActions = ({ lesson, moduleId }: LessonActionsProps) => {
   const router = useRouter();
   const handlePublish = async () => {
     try {
-      await updateCourse(course?.id as string, {
-        active: !course?.active,
-      });
+      await updateLesson(
+        {
+          published: !lesson.published,
+        },
+        lesson?.id as string,
+        moduleId
+      );
       toast.success(
-        ` ${course?.active ? "Course is unpublished" : "Course is published"}`
+        ` ${lesson?.published ? "Lesson is unpublished" : "Lesson is published"}`
       );
       router.refresh();
     } catch (error) {
       console.log(error);
     }
   };
+
   const handleDelete = async () => {
     try {
-      await deleteCourse(course?.id as string);
-      toast.success("Course deleted successfully");
-      router.push("/dashboard/courses");
+      await deleteLesson(lesson?.id as string, moduleId);
+      toast.success("Lesson is deleted");
+      router.refresh();
     } catch (error) {
       console.log(error);
     }
   };
+
   return (
     <div className="flex items-center gap-x-2">
       <Button variant="outline" size="sm" onClick={handlePublish}>
-        {course?.active ? "Unpublish" : "Publish"}
+        {lesson?.published ? "Unpublish" : "Publish"}
       </Button>
-      {!course?.active && (
+
+      {!lesson?.published && (
         <Button size="sm" onClick={handleDelete}>
           <Trash className="h-4 w-4" />
         </Button>

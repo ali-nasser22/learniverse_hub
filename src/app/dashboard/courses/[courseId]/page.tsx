@@ -17,6 +17,7 @@ import {
 } from "../../../../../queries/categories";
 import { serializeDocument } from "@/lib/serialize";
 import { IModule } from "../../../../../model/module-model";
+import { ICourse } from "../../../../../model/course-model";
 
 interface EditCourseProps {
   params: Promise<{
@@ -35,7 +36,9 @@ const EditCourse = async ({ params }: EditCourseProps) => {
   }));
   const rowModules = course?.modules?.sort((a, b) => a.order - b.order);
   const modules = serializeDocument(rowModules || []) as unknown as IModule[];
-
+  const serializedCourse = serializeDocument(
+    course as unknown as ICourse
+  ) as unknown as ICourse;
   return (
     <>
       {!course?.active && (
@@ -46,7 +49,7 @@ const EditCourse = async ({ params }: EditCourseProps) => {
       )}
       <div className="p-6">
         <div className="flex items-center justify-end">
-          <CourseActions />
+          <CourseActions course={serializedCourse} />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16">
           <div>

@@ -66,3 +66,15 @@ export async function updateModule(data: unknown, moduleId: string) {
     throw new Error(error as string);
   }
 }
+export async function deleteModule(moduleId: string) {
+  try {
+    const myModule = await Module.findByIdAndDelete(moduleId);
+    const myCourse = await Course.findById(myModule?.course);
+    myCourse.modules = myCourse.modules.filter((id: string) => id !== moduleId);
+    await myCourse.save();
+    revalidatePath(`/dashboard/courses/${myCourse?.id}`);
+    return JSON.parse(JSON.stringify(myModule));
+  } catch (error) {
+    throw new Error(error as string);
+  }
+}

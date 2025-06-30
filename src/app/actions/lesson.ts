@@ -26,7 +26,11 @@ export async function createLessonServer(formData: FormData) {
     throw new Error(error as string);
   }
 }
-export async function updateLesson(data: unknown, lessonId: string,moduleId:string) {
+export async function updateLesson(
+  data: unknown,
+  lessonId: string,
+  moduleId: string
+) {
   try {
     const myLesson = await Lesson.findByIdAndUpdate(
       lessonId,
@@ -37,6 +41,22 @@ export async function updateLesson(data: unknown, lessonId: string,moduleId:stri
       `/dashboard/courses/${myModule?.course}/modules/${moduleId}`
     );
 
+    return JSON.parse(JSON.stringify(myLesson));
+  } catch (error) {
+    throw new Error(error as string);
+  }
+}
+export async function deleteLesson(lessonId: string, moduleId: string) {
+  try {
+    const myLesson = await Lesson.findByIdAndDelete(lessonId);
+    const myModule = await Module.findById(moduleId);
+    myModule.lessonIds = myModule.lessonIds.filter(
+      (id: string) => id !== lessonId
+    );
+    await myModule.save();
+    revalidatePath(
+      `/dashboard/courses/${myModule?.course}/modules/${moduleId}`
+    );
     return JSON.parse(JSON.stringify(myLesson));
   } catch (error) {
     throw new Error(error as string);
