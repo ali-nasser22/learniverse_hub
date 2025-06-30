@@ -59,7 +59,6 @@ export const LessonList = ({ items, onReorder, onEdit, isUpdating = false }: Les
     onReorder(bulkUpdateData);
   };
 
-  // Helper function to get lesson ID as string
   const getLessonId = (lesson: ILesson): string => {
     return lesson.id || lesson._id?.toString() || '';
   };

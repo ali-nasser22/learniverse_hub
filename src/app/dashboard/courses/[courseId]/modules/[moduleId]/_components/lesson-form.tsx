@@ -49,7 +49,7 @@ export const LessonForm = ({ initialData, moduleId }: LessonFormProps) => {
   const [isCreating, setIsCreating] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
-  const [editingLessonId, setEditingLessonId] = useState<string | null>(null);
+  const [editingLesson, setEditingLesson] = useState<ILesson | null>(null);
 
   const [lessons, setLessons] = useState<ILesson[]>(() => {
     if (!initialData.lessons) return [];
@@ -144,13 +144,14 @@ export const LessonForm = ({ initialData, moduleId }: LessonFormProps) => {
   };
 
   const onEdit = (lessonId: string) => {
-    setEditingLessonId(lessonId);
+    const lesson = lessons.find((lesson) => lesson.id === lessonId);
+    setEditingLesson(lesson as ILesson);
     setIsEditing(true);
   };
 
   const onCloseModal = () => {
     setIsEditing(false);
-    setEditingLessonId(null);
+    setEditingLesson(null);
   };
 
   const onLessonUpdate = (updatedLesson: ILesson) => {
@@ -255,15 +256,23 @@ export const LessonForm = ({ initialData, moduleId }: LessonFormProps) => {
           Drag & drop to reorder the lessons
         </p>
       )}
-
       <LessonModal
         open={isEditing}
         onClose={onCloseModal}
-        lessonId={editingLessonId}
+        lesson={editingLesson as ILesson}
         moduleId={moduleId}
         onUpdate={onLessonUpdate}
         onDelete={onLessonDelete}
       />
+
+      {/* <LessonModal
+        open={isEditing}
+        onClose={onCloseModal}
+        lessonId={editingLessonId as string}
+        moduleId={moduleId}
+        onUpdate={onLessonUpdate}
+        onDelete={onLessonDelete}
+      /> */}
     </div>
   );
 };

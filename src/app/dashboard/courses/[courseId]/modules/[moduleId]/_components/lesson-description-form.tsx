@@ -4,8 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
-import { Editor } from "@/components/editor";
-import { Preview } from "@/components/preview";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -14,11 +12,12 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
 import { Pencil } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { updateLesson } from "@/app/actions/lesson";
 
 const formSchema = z.object({
   description: z.string().min(1),
@@ -32,13 +31,13 @@ interface InitialData {
 
 interface LessonDescriptionFormProps {
   initialData: InitialData;
-  courseId: string;
+  moduleId: string;
   lessonId: string;
 }
 
 export const LessonDescriptionForm = ({
   initialData,
-  courseId,
+  moduleId,
   lessonId,
 }: LessonDescriptionFormProps) => {
   const router = useRouter();
@@ -49,7 +48,7 @@ export const LessonDescriptionForm = ({
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      description: initialData?.description || "",
+      description: initialData.description || "", 
     },
   });
 
@@ -57,10 +56,16 @@ export const LessonDescriptionForm = ({
 
   const onSubmit = async (values: FormValues) => {
     try {
+      await updateLesson(
+        { description: values.description },
+        lessonId,
+        moduleId
+      );
+
       toast.success("Lesson updated");
       toggleEdit();
       router.refresh();
-    } catch (error) {
+    } catch {
       toast.error("Something went wrong");
     }
   };
@@ -68,7 +73,7 @@ export const LessonDescriptionForm = ({
   return (
     <div className="mt-6 border bg-slate-100 rounded-md p-4">
       <div className="font-medium flex items-center justify-between">
-        Chapter Description
+        Lesson description
         <Button variant="ghost" onClick={toggleEdit}>
           {isEditing ? (
             <>Cancel</>
@@ -80,19 +85,7 @@ export const LessonDescriptionForm = ({
           )}
         </Button>
       </div>
-      {!isEditing && (
-        <div
-          className={cn(
-            "text-sm mt-2",
-            !initialData.description && "text-slate-500 italic"
-          )}
-        >
-          {!initialData.description && "No description"}
-          {initialData.description && (
-            <Preview value={initialData.description} />
-          )}
-        </div>
-      )}
+      {!isEditing && <p className="text-sm mt-2">{initialData.description}</p>}
       {isEditing && (
         <Form {...form}>
           <form
@@ -105,7 +98,11 @@ export const LessonDescriptionForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Editor {...field} />
+                    <Input
+                      disabled={isSubmitting}
+                      placeholder="e.g. 'This is a description of the lesson'"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

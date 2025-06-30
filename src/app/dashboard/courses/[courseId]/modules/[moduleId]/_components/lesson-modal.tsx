@@ -7,86 +7,109 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { LayoutDashboard, Eye, Video, ArrowLeft } from "lucide-react";
-import Link from "next/link";
+import { LayoutDashboard } from "lucide-react";
+import { Eye } from "lucide-react";
+import { Video } from "lucide-react";
 import { LessonTitleForm } from "./lesson-title-form";
 import { LessonDescriptionForm } from "./lesson-description-form";
 import { LessonAccessForm } from "./lesson-access-form";
 import { VideoUrlForm } from "./video-url-form";
 import { CourseActions } from "../../../_components/course-action";
+import { ILesson } from "../../../../../../../../model/lesson-model";
 
 interface LessonModalProps {
   open: boolean;
-  setOpen: (open: boolean) => void;
+  onClose: () => void;
+  lesson: ILesson;
+  moduleId: string;
+  onUpdate: (lesson: ILesson) => void;
+  onDelete: (lessonId: string) => void;
 }
 
-export const LessonModal = ({ open, setOpen }: LessonModalProps) => {
+export const LessonModal = ({
+  open,
+  onClose,
+  lesson,
+  moduleId,
+  // onUpdate,
+  // onDelete,
+}: LessonModalProps) => {
+  console.log(lesson);
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={onClose}>
+      <DialogTrigger>Open</DialogTrigger>
       <DialogContent
         className="sm:max-w-[1200px] w-[96%] overflow-y-auto max-h-[90vh]"
         onInteractOutside={(e) => {
           e.preventDefault();
         }}
       >
-        <div>
-          <div className="flex items-center justify-between">
-            <div className="w-full">
-              <Link
-                href={`/dashboard/courses/${1}`}
-                className="flex items-center text-sm hover:opacity-75 transition mb-6"
-              >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to course setup
-              </Link>
-              <div className="flex items-center justify-end">
-                <CourseActions />
-              </div>
+        <DialogHeader>
+          <DialogTitle>Lesson Editor</DialogTitle>
+          <DialogDescription>
+            Customize and manage the settings for this lesson.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="flex items-center justify-between">
+          <div className="w-full">
+            <div className="flex items-center justify-end">
+              <CourseActions />
             </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16">
-            <div className="space-y-4">
-              <div>
-                <div className="flex items-center gap-x-2">
-                  <IconBadge icon={LayoutDashboard} />
-                  <h2 className="text-xl">Customize Your chapter</h2>
-                </div>
-                <LessonTitleForm
-                  initialData={{}}
-                  courseId={"1"}
-                  lessonId={"1"}
-                />
-                <LessonDescriptionForm
-                  initialData={{}}
-                  courseId={"1"}
-                  lessonId={"1"}
-                />
-              </div>
-              <div>
-                <div className="flex items-center gap-x-2">
-                  <IconBadge icon={Eye} />
-                  <h2 className="text-xl">Access Settings</h2>
-                </div>
-                <LessonAccessForm
-                  initialData={{}}
-                  courseId={"1"}
-                  lessonId={"1"}
-                />
-              </div>
-            </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16">
+          <div className="space-y-4">
             <div>
               <div className="flex items-center gap-x-2">
-                <IconBadge icon={Video} />
-                <h2 className="text-xl">Add a video</h2>
+                <IconBadge icon={LayoutDashboard} />
+                <h2 className="text-xl">Customize Your chapter</h2>
               </div>
-              <VideoUrlForm
-                initialData={{
-                  url: "https://www.youtube.com/embed/LJi2tiWiYmI?si=-vs8fO-xzWmu7ztG",
-                }}
-                courseId={"1"}
-                lessonId={"1"}
+              <div>
+                <h2 className="text-xl">Lesson Title</h2>
+              </div>
+            </div>
+
+            <LessonTitleForm
+              initialData={{ title: lesson?.title }}
+              moduleId={moduleId}
+              lessonId={lesson?.id as string}
+            />
+
+            <LessonDescriptionForm
+              initialData={{ description: lesson?.description }}
+              moduleId={moduleId}
+              lessonId={lesson?.id as string}
+            />
+
+            <div>
+              <div className="flex items-center gap-x-2">
+                <IconBadge icon={Eye} />
+                <h2 className="text-xl">Access Settings</h2>
+              </div>
+              <LessonAccessForm
+                initialData={{ isFree: lesson?.access === "public" }}
+                moduleId={moduleId}
+                lessonId={lesson?.id as string}
               />
             </div>
+          </div>
+
+          <div>
+            <div className="flex items-center gap-x-2">
+              <IconBadge icon={Video} />
+              <h2 className="text-xl">Add a video</h2>
+            </div>
+            <VideoUrlForm
+              initialData={{
+                url: lesson?.video_url,
+                duration: lesson?.duration,
+              }}
+              moduleId={moduleId}
+              lessonId={lesson?.id as string}
+            />
           </div>
         </div>
       </DialogContent>

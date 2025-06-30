@@ -18,6 +18,7 @@ import { Pencil } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { updateLesson } from "@/app/actions/lesson";
 
 const formSchema = z.object({
   isFree: z.boolean().default(false),
@@ -31,13 +32,13 @@ interface InitialData {
 
 interface LessonAccessFormProps {
   initialData: InitialData;
-  courseId: string;
+  moduleId: string;
   lessonId: string;
 }
 
 export const LessonAccessForm = ({
   initialData,
-  courseId,
+  moduleId,
   lessonId,
 }: LessonAccessFormProps) => {
   const router = useRouter();
@@ -56,10 +57,16 @@ export const LessonAccessForm = ({
 
   const onSubmit = async (values: FormValues) => {
     try {
+      await updateLesson(
+        { access: values.isFree ? "public" : "private" },
+        lessonId,
+        moduleId
+      );
       toast.success("Lesson updated");
       toggleEdit();
       router.refresh();
     } catch (error) {
+      console.log(error);
       toast.error("Something went wrong");
     }
   };

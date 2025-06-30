@@ -1,7 +1,10 @@
 "use server";
 
+import { UpdateQuery } from "mongoose";
 import { Module } from "../../../model/module-model";
 import { createLesson } from "../../../queries/lessons";
+import { ILesson, Lesson } from "../../../model/lesson-model";
+import { revalidatePath } from "next/cache";
 
 export async function createLessonServer(formData: FormData) {
   try {
@@ -19,6 +22,22 @@ export async function createLessonServer(formData: FormData) {
     await myModule.save();
 
     return createdLesson;
+  } catch (error) {
+    throw new Error(error as string);
+  }
+}
+export async function updateLesson(data: unknown, lessonId: string,moduleId:string) {
+  try {
+    const myLesson = await Lesson.findByIdAndUpdate(
+      lessonId,
+      data as unknown as UpdateQuery<ILesson>
+    );
+    const myModule = await Module.findById(moduleId);
+    revalidatePath(
+      `/dashboard/courses/${myModule?.course}/modules/${moduleId}`
+    );
+
+    return JSON.parse(JSON.stringify(myLesson));
   } catch (error) {
     throw new Error(error as string);
   }

@@ -1,5 +1,5 @@
-import mongoose, { Schema } from "mongoose";
-import { IModule } from "./module-model";
+// lesson-model.ts
+import mongoose, { Schema, Types } from "mongoose";
 import { MongoDocument } from "@/lib/convertData";
 
 export interface ILesson extends MongoDocument {
@@ -7,13 +7,13 @@ export interface ILesson extends MongoDocument {
   _id: string;
   title: string;
   description: string;
-  duration: number; // duration in seconds
+  duration: number;
   video_url: string;
   published: boolean;
   slug: string;
   access: "public" | "private";
-  module?: IModule; // Reference to parent module
-  order: number; // Order within the module
+  module?: Types.ObjectId | string;
+  order: number;
   createdOn: Date;
   modifiedOn: Date;
   __v?: number;
@@ -53,6 +53,11 @@ const LessonSchema = new Schema<ILesson>({
     type: String,
     enum: ["public", "private"],
     default: "private",
+  },
+  module: {
+    type: Schema.Types.ObjectId,
+    ref: "Module",
+    required: false,
   },
 });
 
