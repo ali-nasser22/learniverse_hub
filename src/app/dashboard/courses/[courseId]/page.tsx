@@ -18,6 +18,8 @@ import {
 import { serializeDocument } from "@/lib/serialize";
 import { IModule } from "../../../../../model/module-model";
 import { ICourse } from "../../../../../model/course-model";
+import { getPublishedQuizSets } from "@/app/actions/quizSet";
+import { IQuizSet } from "../../../../../model/quizsets-model";
 
 interface EditCourseProps {
   params: Promise<{
@@ -39,6 +41,7 @@ const EditCourse = async ({ params }: EditCourseProps) => {
   const serializedCourse = serializeDocument(
     course as unknown as ICourse
   ) as unknown as ICourse;
+  const publishedQuizSets = await getPublishedQuizSets();
   return (
     <>
       {!course?.active && (
@@ -88,7 +91,16 @@ const EditCourse = async ({ params }: EditCourseProps) => {
               }}
               courseId={courseId}
             />
-            <QuizSetForm initialData={{}} courseId="1" />
+            <QuizSetForm
+              initialData={{
+                quizSetId: serializedCourse?.quizSet as unknown as string,
+              }}
+              courseId={courseId}
+              options={publishedQuizSets.map((quizSet: IQuizSet) => ({
+                value: quizSet._id,
+                label: quizSet.title,
+              }))}
+            />
           </div>
           <div className="space-y-6">
             <div>

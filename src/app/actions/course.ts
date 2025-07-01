@@ -57,3 +57,21 @@ export async function deleteCourse(courseId: string) {
     throw new Error("Failed to delete course");
   }
 }
+export async function updateCourseQuizSet(courseId: string, quizSetId: string) {
+  try {
+    const updatedCourse = await Course.findByIdAndUpdate(
+      courseId,
+      { quizSet: quizSetId },
+      { new: true }
+    );
+
+    if (!updatedCourse) {
+      throw new Error("Course not found");
+    }
+
+    return JSON.parse(JSON.stringify(updatedCourse));
+  } catch (error) {
+    console.log(error);
+    throw new Error("Failed to update course quiz set");
+  }
+}

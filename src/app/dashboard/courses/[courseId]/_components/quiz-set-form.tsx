@@ -18,6 +18,7 @@ import { Pencil } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { updateCourseQuizSet } from "@/app/actions/course";
 
 const formSchema = z.object({
   quizSetId: z.string().min(1),
@@ -43,16 +44,7 @@ interface QuizSetFormProps {
 export const QuizSetForm = ({
   initialData,
   courseId,
-  options = [
-    {
-      value: "quiz_set_1",
-      label: "Quiz Set 1",
-    },
-    {
-      value: "2",
-      label: "Quiz Set 2",
-    },
-  ],
+  options,
 }: QuizSetFormProps) => {
   const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
@@ -70,10 +62,12 @@ export const QuizSetForm = ({
 
   const onSubmit = async (values: FormValues) => {
     try {
+      await updateCourseQuizSet(courseId, values.quizSetId);
       toast.success("Course updated");
       toggleEdit();
       router.refresh();
     } catch (error) {
+      console.error("Error updating course quiz set:", error);
       toast.error("Something went wrong");
     }
   };
@@ -100,10 +94,12 @@ export const QuizSetForm = ({
             !initialData.quizSetId && "text-slate-500 italic"
           )}
         >
-          {"No quiz set selected"}
+          {initialData.quizSetId
+            ? options?.find((option) => option.value === initialData.quizSetId)
+                ?.label || "Quiz set not found"
+            : "No quiz set selected"}
         </p>
       )}
-      {console.log({ options })}
       {isEditing && (
         <Form {...form}>
           <form
@@ -116,7 +112,7 @@ export const QuizSetForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Combobox options={options} {...field} />
+                    <Combobox options={options || []} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

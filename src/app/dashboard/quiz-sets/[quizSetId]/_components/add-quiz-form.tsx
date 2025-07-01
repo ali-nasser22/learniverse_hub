@@ -21,6 +21,7 @@ import { useRouter } from "next/navigation";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import { IQuiz } from "../../../../../../model/quiz-model";
+import { createQuizQuestion } from "@/app/actions/quizQuestion";
 
 const formSchema = z.object({
   title: z
@@ -97,16 +98,13 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>;
 
 interface AddQuizFormProps {
-  setQuizes: IQuiz[];
+  setQuestions: IQuiz[];
   quizSetId: string;
 }
 
-export const AddQuizForm = ({
-  setQuizes,
-  quizSetId,
-}: AddQuizFormProps) => {
-  const router = useRouter();
+export const AddQuizForm = ({ setQuestions, quizSetId }: AddQuizFormProps) => {
 
+  const router = useRouter();
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     mode: "all",
@@ -140,8 +138,6 @@ export const AddQuizForm = ({
 
   const onSubmit = async (values: FormValues): Promise<void> => {
     try {
-      console.log({ values });
-
       const structuredQuiz: Partial<IQuiz> = {
         title: values.title,
         description: values.description || "",
@@ -156,8 +152,12 @@ export const AddQuizForm = ({
         ],
       };
 
-      // TODO: Implement API call to save quiz to database
-      console.log("Quiz to save:", structuredQuiz);
+      if (isValid) {
+         await createQuizQuestion(
+          quizSetId,
+          structuredQuiz as IQuiz
+        );
+      }
 
       form.reset({
         title: "",
@@ -205,11 +205,11 @@ export const AddQuizForm = ({
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Quiz Title</FormLabel>
+                <FormLabel>Question Title</FormLabel>
                 <FormControl>
                   <Input
                     disabled={isSubmitting}
-                    placeholder="Enter quiz question"
+                    placeholder="Enter question title"
                     {...field}
                   />
                 </FormControl>
@@ -247,7 +247,7 @@ export const AddQuizForm = ({
                 <FormControl>
                   <Textarea
                     disabled={isSubmitting}
-                    placeholder="Enter quiz explanations"
+                    placeholder="Enter question explanations"
                     {...field}
                   />
                 </FormControl>

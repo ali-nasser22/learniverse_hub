@@ -15,7 +15,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-
+import { createQuizSetServer } from "@/app/actions/quizSet";
 import { toast } from "sonner";
 
 const formSchema = z.object({
@@ -40,9 +40,14 @@ const AddQuizSet = () => {
 
   const onSubmit = async (values: FormValues): Promise<void> => {
     try {
-      router.push(`/dashboard/quiz-sets/${1}`);
+      const newQuizSet = await createQuizSetServer({
+        title: values.title,
+      });
+
+      router.push(`/dashboard/quiz-sets/${newQuizSet._id}`);
       toast.success("Quiz Set Created");
     } catch (error) {
+      console.error("Error creating quiz set:", error);
       toast.error("Something went wrong");
     }
   };
