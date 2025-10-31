@@ -40,13 +40,26 @@ const MainNav: React.FC<MainNavProps> = ({ items, children }) => {
     async function getUser() {
       try {
         const response = await fetch("/api/user/me");
+        if (!response.ok) {
+          console.error("API error:", response.status, response.statusText);
+          return;
+        }
+
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+          console.error("Expected JSON but got:", contentType);
+          return;
+        }
+
         const data = await response.json();
         setLoggedInUser(data);
       } catch (error) {
         console.error("Error fetching user data:", error);
       }
     }
-    getUser();
+    if (session) {
+      getUser();
+    }
   }, [session]);
   return (
     <>
