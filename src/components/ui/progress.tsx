@@ -5,11 +5,24 @@ import * as ProgressPrimitive from "@radix-ui/react-progress"
 
 import { cn } from "@/lib/utils"
 
+const variantStyles = {
+  default: "bg-sky-700",
+  success: "bg-emerald-700",
+} as const;
+
+type ProgressVariant = keyof typeof variantStyles;
+
+interface ProgressProps extends React.ComponentProps<typeof ProgressPrimitive.Root> {
+  value?: number;
+  variant?: ProgressVariant;
+}
+
 function Progress({
   className,
   value,
+  variant,
   ...props
-}: React.ComponentProps<typeof ProgressPrimitive.Root>) {
+}: ProgressProps) {
   return (
     <ProgressPrimitive.Root
       data-slot="progress"
@@ -21,7 +34,10 @@ function Progress({
     >
       <ProgressPrimitive.Indicator
         data-slot="progress-indicator"
-        className="bg-primary h-full w-full flex-1 transition-all"
+        className={cn(
+          "h-full w-full flex-1 transition-all",
+          variantStyles[variant || "default"]
+        )}
         style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
       />
     </ProgressPrimitive.Root>
@@ -29,3 +45,4 @@ function Progress({
 }
 
 export { Progress }
+export type { ProgressVariant }
