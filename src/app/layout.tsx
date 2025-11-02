@@ -1,44 +1,45 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono, Inter } from "next/font/google";
+import type {Metadata} from "next";
+import {Geist, Geist_Mono, Inter} from "next/font/google";
 import "./globals.css";
-import { cn } from "@/lib/utils";
-import { Toaster } from "@/components/ui/sonner";
-import { dbConnect } from "../../service/mongo";
+import {cn} from "@/lib/utils";
+import {Toaster} from "@/components/ui/sonner";
+import {dbConnect} from "../../service/mongo";
+import React from "react";
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+    variable: "--font-geist-sans",
+    subsets: ["latin"],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+    variable: "--font-geist-mono",
+    subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Learviverse Hub",
-  description:
-    "Discover, Learn, and Grow with our powerful learning platform built for students, professionals, and lifelong learners.",
+    title: "Learviverse Hub",
+    description:
+        "Discover, Learn, and Grow with our powerful learning platform built for students, professionals, and lifelong learners.",
 };
 
-const poppins = Inter({ subsets: ["latin"], variable: "--font-poppins" });
+const poppins = Inter({subsets: ["latin"], variable: "--font-poppins"});
 
 export default async function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
+                                             children,
+                                         }: Readonly<{
+    children: React.ReactNode;
 }>) {
-  dbConnect();
-  return (
-    <html lang="en">
-      <body
-        className={cn(
-          `${geistSans.variable} ${geistMono.variable} antialiased, ${poppins.className}`
-        )}
-      >
+    dbConnect();
+    return (
+        <html lang="en">
+        <body
+            className={cn(
+                `${geistSans.variable} ${geistMono.variable} antialiased, ${poppins.className}`
+            )}
+        >
         {children}
-        <Toaster richColors />
-      </body>
-    </html>
-  );
+        <Toaster richColors/>
+        </body>
+        </html>
+    );
 }
