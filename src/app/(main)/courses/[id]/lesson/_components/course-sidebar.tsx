@@ -15,7 +15,7 @@ export const CourseSidebar = () => {
                     {/* Check purchase */}
                     {
                         <div className="mt-10">
-                            <CourseProgress variant="success" value={80}/>
+                            <CourseProgress variant="default" value={80}/>
                         </div>
                     }
                 </div>

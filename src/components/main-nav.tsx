@@ -115,7 +115,7 @@ const MainNav: React.FC<MainNavProps> = ({items, children}) => {
                                 {loggedInUser?.role === "STUDENT" && (
                                     <>
                                         <DropdownMenuItem className="cursor-pointer" asChild>
-                                            <Link href="account/enrolled-courses">My Courses</Link>
+                                            <Link href="/account/enrolled-courses">My Courses</Link>
                                         </DropdownMenuItem>
                                         <DropdownMenuItem className="cursor-pointer" asChild>
                                             <Link href="">Testimonials & Certificates</Link>
