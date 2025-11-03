@@ -15,10 +15,11 @@ const CourseLayout = async ({children, params}: CourseLayoutProps) => {
 
     const resolvedParams = await params;
     const loggedInUser = await getLoggedInUser();
+    const userId: string = loggedInUser?.id;
     if (!loggedInUser) {
         redirect('/login');
     }
-    const isEnrolled = await hasEnrollmentForCourse(loggedInUser?.id, resolvedParams.id);
+    const isEnrolled = await hasEnrollmentForCourse(userId, resolvedParams.id);
     if (!isEnrolled) {
         return (
             <div className="flex items-center justify-center min-h-screen">

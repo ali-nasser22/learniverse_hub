@@ -38,11 +38,12 @@ async function EnrolledCourses() {
                     typeof enrollment.course === "object"
             ) || [];
 
+
         return (
             <div className="grid sm:grid-cols-2 gap-6 md:pb-23">
                 {validEnrollments.length > 0 ? (
                     validEnrollments.map((enrollment) => (
-                        <Link href={`/courses/${enrollment.id}/lesson`} key={enrollment.id}>
+                        <Link href={`/courses/${enrollment.course._id.toString()}/lesson`} key={enrollment.id}>
                             <EnrolledCourseCard
                                 key={enrollment.id}
                                 course={enrollment.course}

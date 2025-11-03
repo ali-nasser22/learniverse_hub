@@ -44,7 +44,11 @@ export async function hasEnrollmentForCourse(userId: string, courseId: string) {
         return await Enrollment.findOne({
             course: courseId,
             student: userId,
-        }).lean();
+        }).populate({
+            path: "course",
+            model: Course
+        })
+            .lean();
 
     } catch (error) {
         console.error(error);
