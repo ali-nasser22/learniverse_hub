@@ -2,7 +2,9 @@ import {VideoPlayer} from "./_components/video-player";
 import {Separator} from "@/components/ui/separator";
 import VideoDescription from "./_components/video-description";
 
+
 const Course = () => {
+
     return (
         <div>
             <div className="flex flex-col max-w-4xl mx-auto pb-20">

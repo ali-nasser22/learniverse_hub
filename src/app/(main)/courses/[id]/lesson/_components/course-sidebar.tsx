@@ -13,10 +13,10 @@ import {IModule} from "../../../../../../../model/module-model";
 
 interface IProps {
     courseId: string;
+
 }
 
 export const CourseSidebar = async ({courseId}: IProps) => {
-
 
     const course = await getCourseById(courseId);
     const loggedInUser = await getLoggedInUser();

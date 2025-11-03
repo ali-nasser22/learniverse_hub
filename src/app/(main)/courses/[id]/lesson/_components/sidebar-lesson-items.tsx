@@ -1,10 +1,16 @@
 import {CheckCircle} from "lucide-react";
 import {cn} from "@/lib/utils";
 import Link from "next/link";
+import {ILesson} from "../../../../../../../model/lesson-model";
 
-export const SidebarLessonItems = () => {
+interface IProps {
+    lessonData: ILesson
+}
+
+export const SidebarLessonItems = ({lessonData}: IProps) => {
     const isActive = true;
     const isCompleted = true;
+
     return (
         <Link
             href="#"
@@ -23,7 +29,7 @@ export const SidebarLessonItems = () => {
                         isCompleted && "text-emerald-700"
                     )}
                 />
-                Introduction
+                {lessonData.title ?? 'sss'}
             </div>
         </Link>
     )

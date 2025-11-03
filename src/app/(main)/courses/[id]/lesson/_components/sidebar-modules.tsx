@@ -1,37 +1,32 @@
-import {Accordion, AccordionItem, AccordionTrigger} from "@/components/ui/accordion";
-import {SidebarLessons} from "@/app/(main)/courses/[id]/lesson/_components/sidebar-lessons";
+import {SidebarModulesClient} from "@/app/(main)/courses/[id]/lesson/_components/sidebar-modules-client";
 import {getModuleById} from "../../../../../../../queries/modules";
 import {IModule} from "../../../../../../../model/module-model";
+import {replaceMongoIdInArray} from "@/lib/convertData";
+import {ILesson} from "../../../../../../../model/lesson-model";
+
 
 interface IProps {
     courseId: string;
     modules: {
         moduleId: string;
         lessons: unknown
-    }[]
+    }[];
 }
 
 export const SidebarModules = async ({courseId, modules}: IProps) => {
 
-    const modulesData = await Promise.all(modules.map(async (module) => {
+    let modulesData: IModule[] = await Promise.all(modules.map(async (module) => {
         return await getModuleById(module.moduleId) as IModule;
     }));
-    console.log(modulesData);
-    return (
-        <Accordion
-            defaultValue="item-1"
-            type="single"
-            collapsible
-            className="w-full px-6"
-        >
-            {/* items */}
-            {modulesData.map((module) => (
-                <AccordionItem className="border-0" value="item-1" key={module.id}>
-                    <AccordionTrigger>{module.title}</AccordionTrigger>
-                    <SidebarLessons/>
-                </AccordionItem>
-            ))}
-            {/* items ends */}
-        </Accordion>
-    )
+    modulesData = modulesData.sort((a, b) => a.order - b.order);
+
+    const preparedModules = modulesData.map(module => {
+        const plainModule = JSON.parse(JSON.stringify(module));
+        return {
+            ...plainModule,
+            lessonIds: replaceMongoIdInArray(plainModule.lessonIds) as unknown as ILesson[]
+        };
+    });
+
+    return <SidebarModulesClient modulesData={preparedModules}/>;
 }
