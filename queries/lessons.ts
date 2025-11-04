@@ -1,6 +1,6 @@
 import {replaceMongoIdInObject} from "@/lib/convertData";
 import {ILesson, Lesson} from "../model/lesson-model";
-import {isValidObjectId} from "mongoose";
+import mongoose, {isValidObjectId} from "mongoose";
 
 export async function getLessonById(id: string) {
     // Validate the ID first
@@ -24,5 +24,28 @@ export async function createLesson(data: unknown) {
     } catch (error) {
         console.log(error);
         throw new Error("Failed to create lesson");
+    }
+}
+
+export async function updateLessonStatus(id: string, status: string) {
+    try {
+        const collection = mongoose.connection.collection('lessons');
+
+        const result = await collection.updateOne(
+            {_id: new mongoose.Types.ObjectId(id)},
+            {$set: {status: status}}
+        );
+
+        if (result.matchedCount === 0) {
+            console.log('Lesson not found');
+        }
+
+        return {
+            success: result.acknowledged,
+            modified: result.modifiedCount > 0
+        };
+    } catch (error) {
+        console.error('Error updating lesson status:', error);
+        throw error;
     }
 }

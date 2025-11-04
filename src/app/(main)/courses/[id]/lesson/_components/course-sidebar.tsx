@@ -9,6 +9,7 @@ import {IWatch} from "../../../../../../../model/watch-model";
 import {replaceMongoIdInArray, replaceMongoIdInObject} from "@/lib/convertData";
 import {ILesson} from "../../../../../../../model/lesson-model";
 import {IModule} from "../../../../../../../model/module-model";
+import {updateLessonStatus} from "../../../../../../../queries/lessons";
 
 
 interface IProps {
@@ -34,7 +35,8 @@ export const CourseSidebar = async ({courseId}: IProps) => {
                     const lessonId = lesson._id.toString();
                     const watch = await getWatchForUser(loggedInUser?.id, moduleId, lessonId) as IWatch;
                     if (watch?.status === 'completed') {
-                        // @todo
+                        await updateLessonStatus(lessonId, 'completed');
+                        lesson.status = 'completed';
                     }
                     return {
                         lesson: replaceMongoIdInObject(lesson as unknown as ILesson),

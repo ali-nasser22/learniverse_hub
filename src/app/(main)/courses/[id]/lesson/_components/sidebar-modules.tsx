@@ -28,5 +28,5 @@ export const SidebarModules = async ({courseId, modules}: IProps) => {
         };
     });
 
-    return <SidebarModulesClient modulesData={preparedModules}/>;
+    return <SidebarModulesClient modulesData={preparedModules} courseId={courseId}/>;
 }

@@ -8,9 +8,10 @@ import {IModule} from "../../../../../../../model/module-model";
 
 interface IProps {
     modulesData: IModule[];
+    courseId: string;
 }
 
-export const SidebarModulesClient = ({modulesData}: IProps) => {
+export const SidebarModulesClient = ({modulesData, courseId}: IProps) => {
     const searchParams = useSearchParams();
     const lessonSlug = searchParams.get('name');
 
@@ -32,7 +33,8 @@ export const SidebarModulesClient = ({modulesData}: IProps) => {
             {modulesData.map((module, index) => (
                 <AccordionItem className="border-0" value={module.id!} key={index}>
                     <AccordionTrigger>{module.title}</AccordionTrigger>
-                    <SidebarLessons lessonsData={module.lessonIds as unknown as ILesson[]}/>
+                    <SidebarLessons courseId={courseId} lessonsData={module.lessonIds as unknown as ILesson[]}
+                                    moduleSlug={module.slug}/>
                 </AccordionItem>
             ))}
         </Accordion>
