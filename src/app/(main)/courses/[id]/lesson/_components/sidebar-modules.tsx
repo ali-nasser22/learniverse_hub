@@ -11,9 +11,10 @@ interface IProps {
         moduleId: string;
         lessons: unknown
     }[];
+    isEnrolled: boolean;
 }
 
-export const SidebarModules = async ({courseId, modules}: IProps) => {
+export const SidebarModules = async ({courseId, modules, isEnrolled}: IProps) => {
 
     let modulesData: IModule[] = await Promise.all(modules.map(async (module) => {
         return await getModuleById(module.moduleId) as IModule;
@@ -28,5 +29,5 @@ export const SidebarModules = async ({courseId, modules}: IProps) => {
         };
     });
 
-    return <SidebarModulesClient modulesData={preparedModules} courseId={courseId}/>;
+    return <SidebarModulesClient isEnrolled={isEnrolled} modulesData={preparedModules} courseId={courseId}/>;
 }

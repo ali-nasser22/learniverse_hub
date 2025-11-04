@@ -3,15 +3,17 @@ import Link from "next/link";
 import {ILesson} from "../../../../../../../model/lesson-model";
 import {CheckCircle, Lock, PlayCircle} from "lucide-react";
 
+
 interface IProps {
     lessonData: ILesson;
     moduleSlug: string;
     courseId: string;
+    isEnrolled: boolean;
 }
 
-export const SidebarLessonItems = ({lessonData, moduleSlug, courseId}: IProps) => {
+export const SidebarLessonItems = ({lessonData, moduleSlug, courseId, isEnrolled}: IProps) => {
     const isPrivate = (lessonData: ILesson) => {
-        return lessonData?.access === "private";
+        return lessonData?.access === "private" && !isEnrolled;
     }
     const isCompleted = (lessonData: ILesson) => {
         return lessonData?.status === "completed";

@@ -2,6 +2,7 @@ import {CourseSidebarMobile} from "./_components/course-sidebar-mobile";
 import {CourseSidebar} from "./_components/course-sidebar";
 import React from "react";
 import {getLoggedInUser} from "@/lib/loggedin-user";
+import {hasEnrollmentForCourse} from "../../../../../../queries/enrollement";
 import {redirect} from "next/navigation";
 
 interface CourseLayoutProps {
@@ -13,11 +14,12 @@ const CourseLayout = async ({children, params}: CourseLayoutProps) => {
 
     const resolvedParams = await params;
     const loggedInUser = await getLoggedInUser();
-    // const userId: string = loggedInUser?.id;
+    const userId: string = loggedInUser?.id;
     if (!loggedInUser) {
         redirect('/login');
     }
-    // const isEnrolled = await hasEnrollmentForCourse(userId, resolvedParams.id);
+    const enrollment = await hasEnrollmentForCourse(userId, resolvedParams.id);
+    const isEnrolled = !!enrollment;
     // if (!isEnrolled) {
     //     return (
     //         <div className="flex items-center justify-center min-h-screen">
@@ -44,7 +46,7 @@ const CourseLayout = async ({children, params}: CourseLayoutProps) => {
             <div className="grid grid-cols-1 lg:grid-cols-12">
                 <div className="hidden lg:flex h-full w-96 flex-col inset-y-0 z-50">
                     {/* sidebar starts */}
-                    <CourseSidebar courseId={resolvedParams.id}/>
+                    <CourseSidebar isEnrolled={isEnrolled} courseId={resolvedParams.id}/>
                     {/* sidebar ends */}
                 </div>
                 <main className="lg:pl-96 pt-[80px] lg:pt-[20px] h-full col-span-10 px-4">

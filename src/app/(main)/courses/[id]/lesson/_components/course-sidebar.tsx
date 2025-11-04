@@ -11,13 +11,13 @@ import {ILesson} from "../../../../../../../model/lesson-model";
 import {IModule} from "../../../../../../../model/module-model";
 import {updateLessonStatus} from "../../../../../../../queries/lessons";
 
-
 interface IProps {
     courseId: string;
+    isEnrolled: boolean;
 
 }
 
-export const CourseSidebar = async ({courseId}: IProps) => {
+export const CourseSidebar = async ({courseId, isEnrolled}: IProps) => {
 
     const course = await getCourseById(courseId);
     const loggedInUser = await getLoggedInUser();
@@ -61,7 +61,7 @@ export const CourseSidebar = async ({courseId}: IProps) => {
                         </div>
                     }
                 </div>
-                <SidebarModules courseId={courseId} modules={updatedModules}/>
+                <SidebarModules isEnrolled={isEnrolled} courseId={courseId} modules={updatedModules}/>
                 <div className="w-full px-6">
                     <GiveReviewModal/>
                     <DownloadCertificate/>
