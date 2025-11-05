@@ -16,6 +16,14 @@ interface IProps {
 
 export const SidebarModules = async ({courseId, modules, isEnrolled}: IProps) => {
 
+    const lessonsWithStatus = modules.flatMap((module) =>
+        module?.lessons?.filter(lesson => lesson?.lesson?.status === "completed") ?? []
+    );
+
+    const completedLessonIds = new Set(
+        lessonsWithStatus.map(item => item?.lesson?.id).filter(Boolean)
+    );
+
     let modulesData: IModule[] = await Promise.all(modules.map(async (module) => {
         return await getModuleById(module.moduleId) as IModule;
     }));
@@ -23,9 +31,19 @@ export const SidebarModules = async ({courseId, modules, isEnrolled}: IProps) =>
 
     const preparedModules = modulesData.map(module => {
         const plainModule = JSON.parse(JSON.stringify(module));
+        const lessonsWithStatuses = (replaceMongoIdInArray(plainModule.lessonIds) as unknown as ILesson[]).map(lesson => {
+            if (completedLessonIds.has(lesson.id)) {
+                return {
+                    ...lesson,
+                    status: "completed"
+                };
+            }
+            return lesson;
+        });
+
         return {
             ...plainModule,
-            lessonIds: replaceMongoIdInArray(plainModule.lessonIds) as unknown as ILesson[]
+            lessonIds: lessonsWithStatuses
         };
     });
 

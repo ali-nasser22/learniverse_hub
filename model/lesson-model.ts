@@ -10,7 +10,7 @@ export interface ILesson {
     video_url: string;
     published: boolean;
     slug: string;
-    status: "started" | "in_progress" | "completed";
+    status?: "started" | "in_progress" | "completed";
     active: boolean;
     access: "public" | "private";
     module?: Types.ObjectId | string;

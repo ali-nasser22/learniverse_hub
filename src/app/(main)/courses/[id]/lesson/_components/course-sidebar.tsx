@@ -9,7 +9,6 @@ import {IWatch} from "../../../../../../../model/watch-model";
 import {replaceMongoIdInArray, replaceMongoIdInObject} from "@/lib/convertData";
 import {ILesson} from "../../../../../../../model/lesson-model";
 import {IModule} from "../../../../../../../model/module-model";
-import {updateLessonStatus} from "../../../../../../../queries/lessons";
 
 interface IProps {
     courseId: string;
@@ -35,7 +34,6 @@ export const CourseSidebar = async ({courseId, isEnrolled}: IProps) => {
                     const lessonId = lesson._id.toString();
                     const watch = await getWatchForUser(loggedInUser?.id, moduleId, lessonId) as IWatch;
                     if (watch?.status === 'completed') {
-                        await updateLessonStatus(lessonId, 'completed');
                         lesson.status = 'completed';
                     }
                     return {
