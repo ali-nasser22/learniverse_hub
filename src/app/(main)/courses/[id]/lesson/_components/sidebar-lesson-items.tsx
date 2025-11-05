@@ -23,7 +23,7 @@ export const SidebarLessonItems = ({lessonData, moduleSlug, courseId, isEnrolled
             href={
                 isPrivate(lessonData)
                     ? "#"
-                    : `/courses/${courseId}/lessonData?name=${lessonData.slug}&module=${moduleSlug}`
+                    : `/courses/${courseId}/lesson?name=${lessonData.slug}&module=${moduleSlug}`
             }
             className={cn(
                 "flex items-center gap-x-2 text-slate-500 text-sm font-[500]  transition-all hover:text-slate-600 ",

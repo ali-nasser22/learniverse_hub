@@ -4,10 +4,11 @@ import {CourseSidebar} from "./course-sidebar";
 import {VisuallyHidden} from "@radix-ui/react-visually-hidden";
 
 interface IProps {
-    courseId: string
+    courseId: string;
+    isEnrolled: boolean;
 }
 
-export const CourseSidebarMobile = ({courseId}: IProps) => {
+export const CourseSidebarMobile = ({courseId, isEnrolled}: IProps) => {
     return (
         <Sheet>
             <SheetTrigger className="lg:hidden pr-4 hover:opacity-75 transition">
@@ -17,7 +18,7 @@ export const CourseSidebarMobile = ({courseId}: IProps) => {
                 <VisuallyHidden>
                     <SheetTitle>Course Navigation</SheetTitle>
                 </VisuallyHidden>
-                <CourseSidebar courseId={courseId}/>
+                <CourseSidebar isEnrolled={isEnrolled} courseId={courseId}/>
             </SheetContent>
         </Sheet>
     );

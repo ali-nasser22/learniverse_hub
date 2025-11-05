@@ -26,3 +26,17 @@ export async function createLesson(data: unknown) {
         throw new Error("Failed to create lesson");
     }
 }
+
+export async function getLessonBySlug(slug: string) {
+    try {
+        const lesson = await Lesson.findOne({
+            slug
+        }).lean();
+        if (!lesson) {
+            console.log(`Lesson not found with ID: ${slug}`);
+        }
+        return replaceMongoIdInObject(JSON.parse(JSON.stringify(lesson)));
+    } catch (error) {
+        console.error(error);
+    }
+}

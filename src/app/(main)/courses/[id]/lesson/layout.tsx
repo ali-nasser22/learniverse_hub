@@ -38,7 +38,7 @@ const CourseLayout = async ({children, params}: CourseLayoutProps) => {
             <div className="h-[80px] lg:pl-96 fixed top-[60px] inset-y-0 w-full z-10">
                 <div className="flex lg:hidden p-4 border-b h-full items-center bg-white shadow-sm relative">
                     {/* Course Sidebar For Mobile */}
-                    <CourseSidebarMobile courseId={resolvedParams.id}/>
+                    <CourseSidebarMobile isEnrolled={isEnrolled} courseId={resolvedParams.id}/>
                     {/* <NavbarRoutes /> */}
                 </div>
             </div>
