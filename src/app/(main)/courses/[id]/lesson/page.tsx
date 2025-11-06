@@ -1,4 +1,3 @@
-import {VideoPlayer} from "./_components/video-player";
 import {Separator} from "@/components/ui/separator";
 import VideoDescription from "./_components/video-description";
 import {getCourseById} from "../../../../../../queries/courses";
@@ -7,6 +6,7 @@ import {ICourse} from "../../../../../../model/course-model";
 import {IModule} from "../../../../../../model/module-model";
 import {getLessonBySlug} from "../../../../../../queries/lessons";
 import {ILesson} from "../../../../../../model/lesson-model";
+import {LessonVideo} from "@/app/(main)/courses/[id]/lesson/_components/lesson-video";
 
 interface IProps {
     params: Promise<{ id: string }>;
@@ -24,12 +24,11 @@ const Course = async ({params, searchParams}: IProps) => {
         ?.sort((a, b) => a.order - b.order)[0]) as unknown as ILesson;
     const lessonToPlay = otherParams.name ? await getLessonBySlug(otherParams?.name) as unknown as ILesson : defaultLesson;
     const defaultModule = otherParams.module ?? allModules[0].slug;
-    console.log(defaultModule);
     return (
         <div>
             <div className="flex flex-col max-w-4xl mx-auto pb-20">
                 <div className="p-4 w-full">
-                    <VideoPlayer videoUrl={lessonToPlay.video_url}/>
+                    <LessonVideo courseId={resolvedParams.id} lesson={lessonToPlay} module={defaultModule}/>
                 </div>
                 <div>
                     <div className="p-4 flex flex-col md:flex-row items-center justify-between">
