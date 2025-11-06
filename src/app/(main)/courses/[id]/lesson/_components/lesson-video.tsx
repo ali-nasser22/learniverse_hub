@@ -23,6 +23,62 @@ export const LessonVideo = ({courseId, lesson, module}: IProps) => {
         }
     }, [])
 
+
+    useEffect(() => {
+        async function updateLessonWatch() {
+            const response = await fetch('/api/lesson-watch', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    courseId,
+                    lessonId: lesson.id,
+                    moduleSlug: module,
+                    status: 'started',
+                    lastTime: 0
+                })
+            });
+            if (response.ok) {
+                const result = await response.text();
+                console.log(result);
+                setStarted(false);
+            }
+        }
+
+        if (started) {
+            updateLessonWatch();
+        }
+    }, [started, courseId, lesson.id, module]);
+
+    useEffect(() => {
+
+        async function updateLessonWatch() {
+            const response = await fetch('/api/lesson-watch', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    courseId,
+                    lessonId: lesson.id,
+                    moduleSlug: module,
+                    status: 'completed',
+                    lastTime: duration
+                })
+            });
+            if (response.ok) {
+                setEnded(false);
+                router.refresh();
+            }
+        }
+
+        if (ended) {
+            updateLessonWatch();
+        }
+
+    }, [courseId, duration, ended, lesson.id, module, router]);
+
     // Extract video ID and convert to manifest URL, because cloudflare isn't supported by ReactPlayer
     const getVideoManifestUrl = (iframeUrl: string) => {
         const videoId = iframeUrl.split('/').pop();
