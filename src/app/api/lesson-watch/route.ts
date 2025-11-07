@@ -6,10 +6,24 @@ import {getModuleBySlug} from "../../../../queries/modules";
 import {IModule} from "../../../../model/module-model";
 import {IWatch, Watch} from "../../../../model/watch-model";
 import {dbConnect} from "../../../../service/mongo";
+import {createWatchReport} from "../../../../queries/reports";
 
 const STARTED = "started";
 const COMPLETED = "completed";
 
+async function updateReport(userId: string, courseId: string, moduleId: string, lessonId: string) {
+
+    try {
+        await createWatchReport({
+            userId,
+            courseId,
+            moduleId,
+            lessonId,
+        })
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 export async function POST(req: NextRequest) {
     await dbConnect();
@@ -17,7 +31,7 @@ export async function POST(req: NextRequest) {
     const loggedInUser = await getLoggedInUser();
     const lesson = await getLessonById(lessonId) as unknown as ILesson;
     const moduleData = await getModuleBySlug(moduleSlug) as unknown as IModule;
-    
+
 
     if (!loggedInUser) {
         return new NextResponse('you are not authenticated', {
@@ -57,6 +71,7 @@ export async function POST(req: NextRequest) {
         } else if (status === COMPLETED) {
             if (!found) {
                 await Watch.create(watchEntry)
+                await updateReport(loggedInUser.id, courseId, module.id, lessonId)
             } else {
                 if (found.status === STARTED) {
                     // @ts-ignore
