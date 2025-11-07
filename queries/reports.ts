@@ -1,8 +1,10 @@
 import {Assessment} from "../model/assessment-model";
 import {IReport, Report} from "../model/report-model";
 import {replaceMongoIdInObject} from "@/lib/convertData";
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 import {IModule, Module} from "../model/module-model";
+import {getCourseById} from "./courses";
+import {ICourse} from "../model/course-model";
 
 type Filter = {
     course: string;
@@ -36,19 +38,20 @@ export async function createWatchReport(data: Data) {
         let report = await Report.findOne({
             student: data.userId,
             course: data.courseId
-        }).lean() as unknown as IReport;
+        });
 
         if (!report) {
             report = await Report.create({
                 course: data.courseId,
                 student: data.userId,
+                totalCompletedLessons: [],
+                totalCompletedModules: [],
             })
         }
 
         const foundLesson = report.totalCompletedLessons.find((lessonId) => lessonId.toString() === data.lessonId);
 
         if (!foundLesson) {
-            // @ts-ignore
             report.totalCompletedLessons.push(new mongoose.Types.ObjectId(data.lessonId));
         }
 
@@ -56,7 +59,31 @@ export async function createWatchReport(data: Data) {
         const lessonIdsToCheck = moduleData.lessonIds;
         const completedLessonsIds = report.totalCompletedLessons;
 
+        const isModuleCompleted = lessonIdsToCheck?.every((lesson) => {
+            return completedLessonsIds.includes(lesson);
+        })
+
+        if (isModuleCompleted) {
+            const foundModule = report.totalCompletedModules
+                .find((module) => module.toString() === data.moduleId);
+            if (!foundModule) {
+                report.totalCompletedModules.push(new mongoose.Types.ObjectId(data.moduleId));
+            }
+        }
+
+        const course = await getCourseById(data.courseId) as unknown as ICourse;
+        const modulesInCourse = course?.modules;
+        const modulesCount = modulesInCourse?.length ?? 0;
+        const completedModules = report.totalCompletedModules;
+        const completedModulesCount = completedModules?.length ?? 0;
+
+        if (completedModulesCount >= 1 && completedModulesCount === modulesCount) {
+            report.completionDate = Date.now();
+        }
+        await report.save();
     } catch (error) {
         console.error(error);
+        throw new Error(error);
     }
 }
+

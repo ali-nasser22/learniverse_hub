@@ -13,6 +13,7 @@ export interface IReport extends Document {
     course: ICourse;
     student: IUser;
     quizAssessment: IAssessment;
+    completionDate?: Date;
     __v?: number;
 }
 
@@ -38,6 +39,10 @@ const ReportSchema = new Schema<IReport>({
         type: Schema.Types.ObjectId,
         ref: "User",
         required: true,
+    },
+    completionDate: {
+        type: Date,
+        required: false
     },
     quizAssessment: {
         type: Schema.Types.ObjectId,

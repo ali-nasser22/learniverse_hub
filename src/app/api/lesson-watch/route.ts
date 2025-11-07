@@ -12,7 +12,6 @@ const STARTED = "started";
 const COMPLETED = "completed";
 
 async function updateReport(userId: string, courseId: string, moduleId: string, lessonId: string) {
-
     try {
         await createWatchReport({
             userId,
@@ -24,6 +23,7 @@ async function updateReport(userId: string, courseId: string, moduleId: string, 
         console.log(error)
     }
 }
+
 
 export async function POST(req: NextRequest) {
     await dbConnect();
@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
         } else if (status === COMPLETED) {
             if (!found) {
                 await Watch.create(watchEntry)
-                await updateReport(loggedInUser.id, courseId, module.id, lessonId)
+                await updateReport(loggedInUser.id, courseId, moduleData.id!, lessonId)
             } else {
                 if (found.status === STARTED) {
                     // @ts-ignore
@@ -79,6 +79,7 @@ export async function POST(req: NextRequest) {
                     await Watch.findByIdAndUpdate(found._id, {
                         status: COMPLETED,
                     })
+                    await updateReport(loggedInUser.id, courseId, moduleData.id!, lessonId)
                 }
             }
         }

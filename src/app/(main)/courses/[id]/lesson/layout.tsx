@@ -20,19 +20,6 @@ const CourseLayout = async ({children, params}: CourseLayoutProps) => {
     }
     const enrollment = await hasEnrollmentForCourse(userId, resolvedParams.id);
     const isEnrolled = !!enrollment;
-    // if (!isEnrolled) {
-    //     return (
-    //         <div className="flex items-center justify-center min-h-screen">
-    //             <div className="text-center">
-    //                 <h1 className="text-2xl font-bold">Access Denied</h1>
-    //                 <p>You must be enrolled in this course to access this content.</p>
-    //                 <div className="mt-4">
-    //                     <EnrollCourse asLink={false} courseId={resolvedParams.id}/>
-    //                 </div>
-    //             </div>
-    //         </div>
-    //     )
-    // }
     return (
         <div className="">
             <div className="h-[80px] lg:pl-96 fixed top-[60px] inset-y-0 w-full z-10">

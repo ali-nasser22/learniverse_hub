@@ -9,6 +9,7 @@ import {IWatch} from "../../../../../../../model/watch-model";
 import {replaceMongoIdInArray, replaceMongoIdInObject} from "@/lib/convertData";
 import {ILesson} from "../../../../../../../model/lesson-model";
 import {IModule} from "../../../../../../../model/module-model";
+import {getReport} from "../../../../../../../queries/reports";
 
 interface IProps {
     courseId: string;
@@ -47,6 +48,13 @@ export const CourseSidebar = async ({courseId, isEnrolled}: IProps) => {
             };
         }) ?? []
     );
+
+    const report = await getReport({
+        course: courseId,
+        student: loggedInUser?.id,
+    });
+    const totalModulesCompleted = report?.totalCompletedModules?.length ?? 0;
+    const progressPercentage = Math.round((totalModulesCompleted / courseModules?.length) * 100);
     return (
         <>
             <div className="h-full border-r flex flex-col overflow-y-auto shadow-sm">
@@ -55,7 +63,8 @@ export const CourseSidebar = async ({courseId, isEnrolled}: IProps) => {
                     {/* Check purchase */}
                     {
                         <div className="mt-10">
-                            <CourseProgress variant="default" value={80}/>
+                            <CourseProgress variant={progressPercentage === 100 ? 'success' : 'default'}
+                                            value={progressPercentage}/>
                         </div>
                     }
                 </div>
