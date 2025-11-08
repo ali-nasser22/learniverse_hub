@@ -1,6 +1,5 @@
 "use client";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import QuizModal from "./quiz-modal";
 
 interface QuizOption {
     label: string;
@@ -54,17 +53,10 @@ function VideoDescription({description}: IProps) {
                     <TabsTrigger className="capitalize" value="details">
                         Description
                     </TabsTrigger>
-                    <TabsTrigger className="capitalize" value="quiz">
-                        Quiz
-                    </TabsTrigger>
                 </TabsList>
                 <div className="pt-3">
                     <TabsContent value="details">
                         <div>{description}</div>
-                    </TabsContent>
-                    <TabsContent value="quiz">
-                        <p className="mb-4">Quiz notes</p>
-                        <QuizModal quizes={quizes}/>
                     </TabsContent>
                 </div>
             </Tabs>

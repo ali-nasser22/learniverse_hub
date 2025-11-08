@@ -10,6 +10,8 @@ import {replaceMongoIdInArray, replaceMongoIdInObject} from "@/lib/convertData";
 import {ILesson} from "../../../../../../../model/lesson-model";
 import {IModule} from "../../../../../../../model/module-model";
 import {getReport} from "../../../../../../../queries/reports";
+import Quiz from "./quiz";
+import {getQuizSetById} from "../../../../../../../queries/quizsets";
 
 interface IProps {
     courseId: string;
@@ -55,6 +57,19 @@ export const CourseSidebar = async ({courseId, isEnrolled}: IProps) => {
     });
     const totalModulesCompleted = report?.totalCompletedModules?.length ?? 0;
     const progressPercentage = Math.round((totalModulesCompleted / courseModules?.length) * 100);
+    const quizSet = course?.quizSet;
+    const quizSetData = await getQuizSetById(quizSet?.toString() ?? '');
+    const isQuizCompleted = !!report?.quizAssessment;
+    const transformedQuizSet = {
+        title: quizSetData.title,
+        description: quizSetData.description,
+        slug: quizSetData.slug,
+        id: quizSetData.id,
+        active: quizSetData.active,
+        quizIds: quizSetData?.quizIds?.map((quiz) => {
+            return replaceMongoIdInObject(quiz);
+        })
+    }
     return (
         <>
             <div className="h-full border-r flex flex-col overflow-y-auto shadow-sm">
@@ -69,7 +84,10 @@ export const CourseSidebar = async ({courseId, isEnrolled}: IProps) => {
                     }
                 </div>
                 <SidebarModules isEnrolled={isEnrolled} courseId={courseId} modules={updatedModules}/>
-                <div className="w-full px-6">
+                <div className="w-full px-4 lg:px-14 pt-10 pb-5 border-t">
+                    {quizSet && <Quiz quizSet={transformedQuizSet} courseId={courseId} isAttempted={isQuizCompleted}/>}
+                </div>
+                <div className="w-full px-6 pb-10">
                     <GiveReviewModal/>
                     <DownloadCertificate courseId={courseId} progressPercentage={progressPercentage}/>
                 </div>
