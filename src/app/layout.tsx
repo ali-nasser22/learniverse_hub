@@ -29,7 +29,7 @@ export default async function RootLayout({
                                          }: Readonly<{
     children: React.ReactNode;
 }>) {
-    dbConnect();
+    await dbConnect();
     return (
         <html lang="en">
         <body

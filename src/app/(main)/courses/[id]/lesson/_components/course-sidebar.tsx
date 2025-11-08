@@ -71,7 +71,7 @@ export const CourseSidebar = async ({courseId, isEnrolled}: IProps) => {
                 <SidebarModules isEnrolled={isEnrolled} courseId={courseId} modules={updatedModules}/>
                 <div className="w-full px-6">
                     <GiveReviewModal/>
-                    <DownloadCertificate/>
+                    <DownloadCertificate courseId={courseId} progressPercentage={progressPercentage}/>
                 </div>
             </div>
         </>
