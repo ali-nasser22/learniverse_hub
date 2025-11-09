@@ -1,131 +1,257 @@
 "use client";
+
 import {Button} from "@/components/ui/button";
 import {Dialog, DialogContent, DialogFooter, DialogTitle} from "@/components/ui/dialog";
 import {Label} from "@/components/ui/label";
 import {ArrowLeft, ArrowRight} from "lucide-react";
-import {useState} from "react";
+import {ChangeEvent, useState} from "react";
+import {addQuizAssessment} from "@/app/actions/quizQuestion";
+import {toast} from "sonner";
+import {useRouter} from "next/navigation";
 
-
-interface QuizOption {
-    label: string;
-    id: number;
-    isCorrect: boolean;
+interface IProps {
+    quizzes: {
+        id?: string;
+        title: string;
+        description: string;
+        options: {
+            label: string;
+            isTrue: boolean;
+        }[];
+    }[];
+    courseId: string;
+    quizSetId?: string;
+    open: boolean;
+    setOpen: (open: boolean) => void;
 }
 
-interface Quiz {
-    id: string;
-    title: string;
-    description: string;
-    question?: string;
-    options: QuizOption[];
-}
+function QuizModal({quizzes, open, courseId, quizSetId, setOpen}: IProps) {
+    const router = useRouter();
+    const totalQuestions = quizzes?.length;
+    const [questionIndex, setQuestionIndex] = useState(0);
+    const lastQuestionIndex = totalQuestions - 1;
+    const currentQuestion = quizzes[questionIndex];
+    const [answers, setAnswers] = useState([]);
+    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [allCorrect, setAllCorrect] = useState(false);
 
-interface QuizModalProps {
-    quizes: Quiz[];
-}
+    const allQuestionsAnswered = answers.length === totalQuestions;
 
-function QuizModal({quizes}: QuizModalProps) {
-    const [open, setOpen] = useState<boolean>(false);
-    const totalQuizes = quizes?.length;
-    const [quizIndex, setQuizIndex] = useState<number>(0);
-    const lastQuizIndex = totalQuizes - 1;
-    const currentQuiz = quizes[quizIndex];
+    const getCurrentAnswer = () => {
+        const answer = answers.find((a) => a.questionId === currentQuestion?.id);
+        return answer?.options?.option || null;
+    };
 
-    const quizChangeHandler = (type: "next" | "prev") => {
-        const nextQuizIndex = quizIndex + 1;
-        const prevQuizIndex = quizIndex - 1;
-        if (type === "next" && nextQuizIndex <= lastQuizIndex) {
-            return setQuizIndex((prev) => prev + 1);
+    const questionChangeHandler = (type: "next" | "prev") => {
+        const nextQuestionIndex = questionIndex + 1;
+        const prevQuestionIndex = questionIndex - 1;
+
+        if (type === "next" && nextQuestionIndex <= lastQuestionIndex) {
+            return setQuestionIndex((prev) => prev + 1);
         }
-        if (type === "prev" && prevQuizIndex >= 0) {
-            setQuizIndex((prev) => prev - 1);
+
+        if (type === "prev" && prevQuestionIndex >= 0) {
+            setQuestionIndex((prev) => prev - 1);
         }
+    };
+
+    function updateAnswer(e: ChangeEvent, questionId: string, title: string, label: string) {
+        if (isSubmitted) return;
+
+        const key = e.target.name;
+        const checked = e.target.checked;
+        const obj = {};
+
+        if (checked) {
+            // @ts-ignore
+            obj["option"] = label;
+        }
+
+        const answer = {
+            questionId,
+            options: obj,
+        };
+
+        const found = answers.filter((a) => a.questionId === answer.questionId);
+
+        if (found) {
+            const filtered = answers.filter((a) => a.questionId !== answer.questionId);
+            setAnswers([...filtered, answer]);
+        } else {
+            setAnswers([...answers, answer]);
+        }
+    }
+
+    const checkAllAnswersCorrect = () => {
+        let correctCount = 0;
+
+        answers.forEach((answer) => {
+            const question = quizzes.find((q) => q.id === answer.questionId);
+            if (question) {
+                const correctOption = question.options.find((opt) => opt.isTrue);
+                if (correctOption && correctOption.label === answer.options.option) {
+                    correctCount++;
+                }
+            }
+        });
+
+        return correctCount === totalQuestions;
+    };
+
+    const formatAnswersForSubmission = () => {
+        return answers.map((answer) => {
+            const question = quizzes.find((q) => q.id === answer.questionId);
+
+            if (!question) return null;
+
+            const formattedOptions = question.options.map((opt) => ({
+                option: opt.label,
+                isCorrect: opt.isTrue,
+                isSelected: opt.label === answer.options.option
+            }));
+
+            return {
+                quizId: answer.questionId,
+                options: formattedOptions,
+                attempted: true
+            };
+        }).filter(Boolean);
+    };
+
+    const handleSubmit = async (e: MouseEvent) => {
+        e.preventDefault();
+        const areAllCorrect = checkAllAnswersCorrect();
+        setAllCorrect(areAllCorrect);
+        setIsSubmitted(true);
+
+        if (areAllCorrect) {
+            try {
+                const formattedAnswers = formatAnswersForSubmission();
+                await addQuizAssessment(courseId, quizSetId, formattedAnswers);
+                setOpen(false);
+                router.refresh();
+                toast.success("Quiz Submitted successfully.");
+            } catch (error) {
+                toast.error("Problem in submitting the quiz please try again later.");
+                console.error(error);
+            }
+        }
+    };
+
+    const handleRetake = () => {
+        setAnswers([]);
+        setIsSubmitted(false);
+        setAllCorrect(false);
+        setQuestionIndex(0);
+    };
+
+    const currentAnswer = getCurrentAnswer();
+
+    const getOptionClassName = (option: any) => {
+        const baseClass = "flex items-center space-x-3 border rounded-lg p-4 cursor-pointer";
+
+        if (!isSubmitted) {
+            return `${baseClass} hover:bg-accent`;
+        }
+
+        const isSelected = currentAnswer === option.label;
+        const isCorrect = option.isTrue;
+
+        if (isSelected && isCorrect) {
+            return `${baseClass} bg-green-100 border-green-500`;
+        }
+
+        if (isSelected && !isCorrect) {
+            return `${baseClass} bg-red-100 border-red-500`;
+        }
+
+        if (!isSelected && isCorrect) {
+            return `${baseClass} bg-green-50 border-green-300`;
+        }
+
+        return baseClass;
     };
 
     return (
         <>
             <Dialog open={open} onOpenChange={setOpen}>
-                <DialogContent className="sm:max-w-[95%] block">
-                    <DialogTitle className="sr-only">Quiz Details</DialogTitle>
-                    <div className="pb-4 border-b border-border text-sm">
-            <span className="text-success inline-block mr-1">
-              {quizIndex + 1} / {totalQuizes}
-            </span>
-                        Number
-                    </div>
-                    <div className="py-4">
-                        <h3 className="text-xl font-medium mb-10">
-                            <svg
-                                className="text-success inline"
-                                strokeWidth="0"
-                                viewBox="0 0 512 512"
-                                height="1em"
-                                width="1em"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    fill="currentColor"
-                                    stroke="currentColor"
-                                    d="M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 448c-110.532 0-200-89.431-200-200 0-110.495 89.472-200 200-200 110.491 0 200 89.471 200 200 0 110.53-89.431 200-200 200zm107.244-255.2c0 67.052-72.421 68.084-72.421 92.863V300c0 6.627-5.373 12-12 12h-45.647c-6.627 0-12-5.373-12-12v-8.659c0-35.745 27.1-50.034 47.579-61.516 17.561-9.845 28.324-16.541 28.324-29.579 0-17.246-21.999-28.693-39.784-28.693-23.189 0-33.894 10.977-48.942 29.969-4.057 5.12-11.46 6.071-16.666 2.124l-27.824-21.098c-5.107-3.872-6.251-11.066-2.644-16.363C184.846 131.491 214.94 112 261.794 112c49.071 0 101.45 38.304 101.45 88.8zM298 368c0 23.159-18.841 42-42 42s-42-18.841-42-42 18.841-42 42-42 42 18.841 42 42z"
-                                ></path>
-                            </svg>
+                <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                    <DialogTitle className="text-2xl">Quiz Details</DialogTitle>
+                    <div>
+                        <div className="text-sm text-gray-500 mb-4">
+                            Question{" "}
+                            <span className="text-foreground font-bold">
+                {questionIndex + 1} / {totalQuestions}
+              </span>
+                        </div>
+                        <div className="text-xl font-semibold mb-2">
                             {" "}
-                            {currentQuiz?.question || "What happens if the userId is not provided in the request parameters?"}
-                        </h3>
-                        <span className="text-[10px] block text-end">
-              <svg
-                  stroke="currentColor"
-                  fill="currentColor"
-                  strokeWidth="0"
-                  version="1.1"
-                  viewBox="0 0 16 16"
-                  className="text-success inline"
-                  height="12"
-                  width="12"
-                  xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                    d="M7 4.75c0-0.412 0.338-0.75 0.75-0.75h0.5c0.412 0 0.75 0.338 0.75 0.75v0.5c0 0.412-0.338 0.75-0.75 0.75h-0.5c-0.412 0-0.75-0.338-0.75-0.75v-0.5z"></path>
-                <path d="M10 12h-4v-1h1v-3h-1v-1h3v4h1z"></path>
-                <path
-                    d="M8 0c-4.418 0-8 3.582-8 8s3.582 8 8 8 8-3.582 8-8-3.582-8-8-8zM8 14.5c-3.59 0-6.5-2.91-6.5-6.5s2.91-6.5 6.5-6.5 6.5 2.91 6.5 6.5-2.91 6.5-6.5 6.5z"></path>
-              </svg>
+                            {currentQuestion?.title}
+                        </div>
+                        <div className="text-sm text-muted-foreground mb-6">
                             {" "}
-                            A question can have multiple answers & there is no negative marking for incorrect selection.
-            </span>
-                    </div>
-                    <div className="grid md:grid-cols-2 gap-5 mb-6">
-                        {currentQuiz?.options.map((option) => (
-                            <div key={option.id}>
-                                <input
-                                    className="opacity-0 invisible absolute [&:checked_+_label]:bg-success/5"
-                                    type="checkbox"
-                                    id={`option-${option.id}`}
-                                />
-                                <Label
-                                    className="border border-border rounded px-2 py-3 block cursor-pointer hover:bg-gray-50 transition-all font-normal"
-                                    htmlFor={`option-${option.id}`}
+                            A question can only have one correct answer & there is no negative
+                            marking for incorrect selection.
+                        </div>
+                        <div className="grid grid-cols-1 gap-4">
+                            {currentQuestion?.options.map((option) => (
+                                <div
+                                    key={option.label}
+                                    className={getOptionClassName(option)}
                                 >
-                                    {option.label}
-                                </Label>
-                            </div>
-                        ))}
+                                    <input
+                                        type="radio"
+                                        name={currentQuestion?.title}
+                                        checked={currentAnswer === option.label}
+                                        disabled={isSubmitted}
+                                        onChange={(e) => {
+                                            updateAnswer(
+                                                e,
+                                                currentQuestion.id || "",
+                                                currentQuestion.title,
+                                                option.label
+                                            );
+                                        }}
+                                        id={`option-${option.label}`}
+                                    />
+                                    <Label
+                                        htmlFor={`option-${option.label}`}
+                                        className="flex-1 cursor-pointer"
+                                    >
+                                        {option.label}
+                                    </Label>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                    <DialogFooter className="flex gap-4 justify-between w-full sm:justify-between">
+                    <DialogFooter>
                         <Button
-                            className="gap-2 rounded-3xl"
-                            disabled={quizIndex === 0}
-                            onClick={() => quizChangeHandler("prev")}
+                            disabled={questionIndex === 0}
+                            onClick={() => questionChangeHandler("prev")}
                         >
-                            <ArrowLeft/> Previous Quiz
+                            <ArrowLeft/>
+                            Previous Question
                         </Button>
+
                         <Button
-                            className="gap-2 rounded-3xl"
-                            disabled={quizIndex >= lastQuizIndex}
-                            onClick={() => quizChangeHandler("next")}
+                            disabled={questionIndex >= lastQuestionIndex}
+                            onClick={() => questionChangeHandler("next")}
                         >
-                            Next Quiz <ArrowRight/>
+                            Next Question
+                            <ArrowRight/>
                         </Button>
+
+                        {allQuestionsAnswered && !isSubmitted && (
+                            <Button className="bg-green-600" onClick={handleSubmit}>
+                                Submit
+                            </Button>
+                        )}
+
+                        {isSubmitted && !allCorrect && (
+                            <Button className="bg-orange-600" onClick={handleRetake}>
+                                Retake Quiz
+                            </Button>
+                        )}
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
