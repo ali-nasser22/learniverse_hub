@@ -89,7 +89,12 @@ export const CourseSidebar = async ({courseId, isEnrolled}: IProps) => {
                 </div>
                 <div className="w-full px-6 pb-10">
                     <GiveReviewModal/>
-                    <DownloadCertificate courseId={courseId} progressPercentage={progressPercentage}/>
+                    {isQuizCompleted && progressPercentage === 100 ? (
+                        <DownloadCertificate courseId={courseId} progressPercentage={progressPercentage}/>) : (
+                        <p className="text-md mt-6 bg-red-500 font-bold text-white p-2 rounded-2xl">Please Finish The
+                            Quiz To Be
+                            Able To Download
+                            Certificate</p>)}
                 </div>
             </div>
         </>

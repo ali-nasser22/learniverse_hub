@@ -1,6 +1,10 @@
 "use server";
 import {IQuiz, Quiz} from "../../../model/quiz-model";
 import {QuizSet} from "../../../model/quizsets-model";
+import {Assessment} from "../../../model/assessment-model";
+import {getReport} from "../../../queries/reports";
+import {getLoggedInUser} from "@/lib/loggedin-user";
+import {Report} from "../../../model/report-model";
 
 export async function createQuizQuestion(quizSetId: string, data: IQuiz) {
     try {
@@ -59,6 +63,24 @@ export async function deleteQuizQuestion(quizSetId: string, quizId: string) {
 }
 
 
-export async function addQuizAssessment(courseId: string | undefined, quizSetId: string | undefined, answers) {
-    console.log(JSON.stringify(answers, null, 2));
+export async function addQuizAssessment(courseId: string, quizSetId: string, answers) {
+    try {
+        const assessment = await Assessment.create({
+            assessments: answers,
+            otherMarks: 0
+        });
+        const loggedInUser = await getLoggedInUser();
+        const foundReport = await getReport({
+            course: courseId,
+            student: loggedInUser?.id
+        });
+        if (!foundReport) {
+            throw new Error("Failed to add answer for course");
+        }
+        await Report.findByIdAndUpdate(foundReport?.id, {
+            quizAssessment: assessment._id
+        })
+    } catch (error) {
+        console.log(error);
+    }
 }
