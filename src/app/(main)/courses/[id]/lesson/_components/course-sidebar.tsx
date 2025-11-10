@@ -88,7 +88,8 @@ export const CourseSidebar = async ({courseId, isEnrolled}: IProps) => {
                     {quizSet && <Quiz quizSet={transformedQuizSet} courseId={courseId} isAttempted={isQuizCompleted}/>}
                 </div>
                 <div className="w-full px-6 pb-10">
-                    <GiveReviewModal/>
+                    {(progressPercentage > 0 && loggedInUser) && (
+                        <GiveReviewModal courseId={courseId} userId={loggedInUser.id}/>)}
                     {isQuizCompleted && progressPercentage === 100 ? (
                         <DownloadCertificate courseId={courseId} progressPercentage={progressPercentage}/>) : (
                         <p className="text-md mt-6 bg-red-500 font-bold text-white p-2 rounded-2xl">Please Finish The

@@ -3,6 +3,7 @@ import CourseDetails from "./_components/CourseDetails";
 import Testimonials from "./_components/Testimonials";
 import RelatedCourses from "./_components/RelatedCourses";
 import React from "react";
+import MoneyBack from "@/components/money-back";
 
 interface SingleCoursePageProps {
     params: Promise<{ id: string }>;
@@ -14,6 +15,7 @@ const SingleCoursePage: React.FC<SingleCoursePageProps> = ({params}) => {
             <CourseDetailsIntro params={params}/>
             <CourseDetails params={params}/>
             <Testimonials params={params}/>
+            <MoneyBack/>
             <RelatedCourses/>
         </>
     );
