@@ -16,7 +16,7 @@ const SingleCoursePage: React.FC<SingleCoursePageProps> = ({params}) => {
             <CourseDetails params={params}/>
             <Testimonials params={params}/>
             <MoneyBack/>
-            <RelatedCourses/>
+            <RelatedCourses params={params}/>
         </>
     );
 };

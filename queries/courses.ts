@@ -167,3 +167,15 @@ export async function createCourse(course: ICourse) {
         throw new Error("Failed to create course");
     }
 }
+
+export async function getCoursesByCategory(categoryId: string) {
+    try {
+        const courses = await Course.find({
+            category: categoryId,
+        }).lean();
+        return replaceMongoIdInArray(courses);
+    } catch (error) {
+        console.error(error);
+        throw new Error("Failed to find courses");
+    }
+}
