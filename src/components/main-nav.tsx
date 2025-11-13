@@ -5,7 +5,7 @@ import {cn} from "@/lib/utils";
 import {Menu, X} from "lucide-react";
 import {Button, buttonVariants} from "./ui/button";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,} from "./ui/dropdown-menu";
-import {Avatar, AvatarFallback, AvatarImage} from "./ui/avatar";
+import {Avatar, AvatarFallback} from "./ui/avatar";
 import MobileNav from "./mobile-nav";
 import {signOut, useSession} from "next-auth/react";
 import {Session} from "next-auth";
@@ -92,10 +92,10 @@ const MainNav: React.FC<MainNavProps> = ({items, children}) => {
                             <DropdownMenuTrigger asChild>
                                 <div className="cursor-pointer">
                                     <Avatar>
-                                        <AvatarImage
-                                            src={loggedInUser?.profilePicture}
-                                            alt={loggedInUser?.firstName}
-                                        />
+                                        {/*<AvatarImage*/}
+                                        {/*    src={loggedInUser?.profilePicture}*/}
+                                        {/*    alt={loggedInUser?.firstName}*/}
+                                        {/*/>*/}
                                         <AvatarFallback>
                                             {loggedInUser?.firstName?.charAt(0)}
                                             {loggedInUser?.lastName?.charAt(0)}

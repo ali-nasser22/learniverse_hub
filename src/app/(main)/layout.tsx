@@ -5,20 +5,16 @@ import {SessionProvider} from "next-auth/react";
 
 const navLinks = [
     {
-        title: "Features",
-        href: "/features",
+        title: "The Wizard",
+        href: "/wizard",
     },
     {
-        title: "Pricing",
-        href: "/pricing",
-    },
-    {
-        title: "Blog",
-        href: "/blog",
+        title: "Courses",
+        href: "/courses",
     },
     {
         title: "Documentation",
-        href: "/documentation",
+        href: "https://github.com/ali-nasser22/learniverse_hub",
     },
 ];
 
