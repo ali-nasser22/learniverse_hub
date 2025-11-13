@@ -117,9 +117,6 @@ const MainNav: React.FC<MainNavProps> = ({items, children}) => {
                                         <DropdownMenuItem className="cursor-pointer" asChild>
                                             <Link href="/account/enrolled-courses">My Courses</Link>
                                         </DropdownMenuItem>
-                                        <DropdownMenuItem className="cursor-pointer" asChild>
-                                            <Link href="">Testimonials & Certificates</Link>
-                                        </DropdownMenuItem>
                                     </>
                                 )}
                                 <DropdownMenuItem className="cursor-pointer" asChild>
