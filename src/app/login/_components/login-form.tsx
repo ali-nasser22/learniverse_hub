@@ -99,12 +99,20 @@ export function LoginForm() {
                     </div>
                     <div className="mt-4 text-center text-sm">
                         Don&apos;t have an account?{" "}
-                        <Link
-                            href="/register/student"
-                            className={`underline ${isLoading ? "pointer-events-none opacity-50" : ""}`}
-                        >
-                            Register
-                        </Link>
+                        <div className="flex flex-col items-center gap-2 text-xs mt-2">
+                            <Link
+                                href="/register/student"
+                                className={`underline ${isLoading ? "pointer-events-none opacity-50" : ""}`}
+                            >
+                                Register As Student
+                            </Link>
+                            <Link
+                                href="/register/instructor"
+                                className={`underline ${isLoading ? "pointer-events-none opacity-50" : ""}`}
+                            >
+                                Register As Instructor
+                            </Link>
+                        </div>
                     </div>
                 </form>
             </CardContent>
