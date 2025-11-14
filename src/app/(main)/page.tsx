@@ -10,6 +10,7 @@ import {getCourseList} from "../../../queries/courses";
 import CourseCard from "./courses/_components/CourseCard";
 import {ICourse} from "../../../model/course-model";
 import {getCategoryList} from "../../../queries/categories";
+import React from "react";
 
 const HomePage: React.FC = async () => {
     const courses = await getCourseList();

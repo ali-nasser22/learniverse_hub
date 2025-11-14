@@ -125,7 +125,7 @@ const CourseDetailsIntro = async ({params}: CourseDetailsIntroProps) => {
                                     <div className="mt-6 flex items-center justify-center flex-wrap gap-3">
                                         <EnrollCourse asLink={false} courseId={course.id}/>
                                         <Link
-                                            href={`/courses/${resolvedParams.id}/preview`}
+                                            href={`/courses/${resolvedParams.id}/lesson`}
                                             className={cn(
                                                 buttonVariants({variant: "outline", size: "lg"})
                                             )}
