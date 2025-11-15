@@ -2,9 +2,11 @@ import {replaceMongoIdInArray, replaceMongoIdInObject,} from "@/lib/convertData"
 import {Quiz} from "../model/quiz-model";
 import {IQuizSet, QuizSet} from "../model/quizsets-model";
 
-export async function getQuizSets() {
+export async function getQuizSets(instructorId: string) {
     try {
-        const quizSets = await QuizSet.find({})
+        const quizSets = await QuizSet.find({
+            instructorId
+        })
             .populate({
                 path: "quizIds",
                 model: Quiz,

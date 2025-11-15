@@ -2,13 +2,14 @@ export const LOGIN = "/login";
 export const ROOT = "/";
 
 export const PUBLIC_ROUTES = [
-  "/login",
-  "/register/student",
-  "/register/instructor",
-  "/courses",
-  "/api/register",
-  "/features",
-  "/blog",
-  "/pricing",
-  "/documentation",
+    "/login",
+    "/register/student",
+    "/register/instructor",
+    "/courses",
+    "/api/register",
+    "/features",
+    "/blog",
+    "/pricing",
+    "/documentation",
+    "/terms&conditions"
 ];

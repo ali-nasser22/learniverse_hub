@@ -1,4 +1,4 @@
-import mongoose, {model, Schema} from "mongoose";
+import mongoose, {model, Schema, Types} from "mongoose";
 import {IQuiz} from "./quiz-model";
 
 export interface IQuizSet extends Document {
@@ -6,6 +6,7 @@ export interface IQuizSet extends Document {
     _id?: string;
     title: string;
     description?: string;
+    instructorId: Types.ObjectId;
     slug: string;
     active: boolean;
     quizIds: IQuiz[];
@@ -15,6 +16,11 @@ export interface IQuizSet extends Document {
 const QuizSetSchema = new Schema<IQuizSet>({
     title: {
         type: String,
+        required: true,
+    },
+    instructorId: {
+        type: Schema.Types.ObjectId,
+        ref: "User",
         required: true,
     },
     description: {
