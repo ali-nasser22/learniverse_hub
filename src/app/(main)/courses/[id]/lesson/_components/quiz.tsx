@@ -60,6 +60,7 @@ export default function Quiz({quizSet, courseId, isAttempted}: IProps) {
                         className="flex gap-2 capitalize border-sky-500 text-sky-500 hover:text-sky-500 hover:bg-sky-500/5 w-full"
                         variant="outline"
                         onClick={() => setOpen(true)}
+                        disabled={isAttempted}
                     >
                         <svg
                             stroke="currentColor"
