@@ -1,34 +1,35 @@
-import { columns } from "./_components/columns";
-import { DataTable } from "./_components/data-table";
-
-interface Live {
-  id: string;
-  title: string;
-  date: string;
-  time: string;
-}
-
-const lives: Live[] = [
-  {
-    id: "1",
-    title: "Career In Backend Web Development",
-    date: "10 Nov 2022",
-    time: "10:00 AM",
-  },
-  {
-    id: "2",
-    title: "Career In Frontend Development",
-    date: "10 Nov 2022",
-    time: "08:30 PM",
-  },
-];
+import {columns} from "./_components/columns";
+import {DataTable} from "./_components/data-table";
+import {getAllLivesForUser} from "../../../../queries/lives";
+import {getLoggedInUser} from "@/lib/loggedin-user";
 
 const LivesPage = async () => {
-  return (
-    <div className="p-6">
-      <DataTable columns={columns} data={lives} />
-    </div>
-  );
+    const loggedInUser = await getLoggedInUser();
+    const myLives = await getAllLivesForUser(loggedInUser?.id);
+    const livesData = myLives.map((live) => {
+        const scheduleDate = new Date(live.schedule);
+
+        return {
+            id: live._id.toString(),
+            title: live.title,
+            date: scheduleDate.toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric',
+                year: 'numeric',
+            }),
+            time: scheduleDate.toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true,
+            }),
+            liveUrl: live.liveUrl,
+        }
+    });
+    return (
+        <div className="p-6">
+            <DataTable columns={columns} data={livesData}/>
+        </div>
+    );
 };
 
 export default LivesPage;

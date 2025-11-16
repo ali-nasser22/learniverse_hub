@@ -1,86 +1,109 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import {Button} from "@/components/ui/button";
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,} from "@/components/ui/dropdown-menu";
 
-import { ArrowUpDown, MoreHorizontal, Pencil } from "lucide-react";
+import {ArrowUpDown, MoreHorizontal, Pencil} from "lucide-react";
 import Link from "next/link";
-import { ColumnDef } from "@tanstack/react-table";
+import {ColumnDef} from "@tanstack/react-table";
 
 interface Live {
-  id: string;
-  title: string;
-  date: string;
-  time: string;
+    id: string;
+    title: string;
+    date: string;
+    time: string;
 }
 
 export const columns: ColumnDef<Live>[] = [
-  {
-    accessorKey: "title",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Title <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
+    {
+        accessorKey: "title",
+        header: ({column}) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Title <ArrowUpDown className="ml-2 h-4 w-4"/>
+                </Button>
+            );
+        },
     },
-  },
-  {
-    accessorKey: "date",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Date <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
+    {
+        accessorKey: "date",
+        header: ({column}) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Date <ArrowUpDown className="ml-2 h-4 w-4"/>
+                </Button>
+            );
+        },
     },
-  },
-  {
-    accessorKey: "time",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Time <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
+    {
+        accessorKey: "time",
+        header: ({column}) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Time <ArrowUpDown className="ml-2 h-4 w-4"/>
+                </Button>
+            );
+        },
     },
-  },
-  {
-    id: "actions",
-    cell: ({ row }) => {
-      const { id } = row.original;
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-4 w-8 p-0">
-              <span className="sr-only">Open Menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <Link href={`/dashboard/lives/${id}`}>
-              <DropdownMenuItem className="cursor-pointer">
-                <Pencil className="h-4 w-4 mr-2" />
-                Edit
-              </DropdownMenuItem>
-            </Link>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+    {
+        accessorKey: "liveUrl",
+        header: ({column}) => {
+            return (
+                <Button
+                    variant="ghost"
+                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Live URL <ArrowUpDown className="ml-2 h-4 w-4"/>
+                </Button>
+            );
+        },
+        cell: ({row}) => {
+            const url = row.getValue("liveUrl") as string;
+            return url ? (
+                <a
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline flex items-center gap-1"
+                >
+                    {url}
+                </a>
+            ) : (
+                <span className="text-gray-400">No URL</span>
+            );
+        },
     },
-  },
+    {
+        id: "actions",
+        cell: ({row}) => {
+            const {id} = row.original;
+            return (
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-4 w-8 p-0">
+                            <span className="sr-only">Open Menu</span>
+                            <MoreHorizontal className="h-4 w-4"/>
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <Link href={`/dashboard/lives/${id}`}>
+                            <DropdownMenuItem className="cursor-pointer">
+                                <Pencil className="h-4 w-4 mr-2"/>
+                                Edit
+                            </DropdownMenuItem>
+                        </Link>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            );
+        },
+    },
 ];
