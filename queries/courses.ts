@@ -24,8 +24,36 @@ function groupBy<T>(array: T[], keyGetter: (item: T) => string) {
     );
 }
 
-export async function getCourseList() {
-    const courses = await Course.find({
+export async function getCourseList(shownOnHome?: boolean, nbOfCourses = 3) {
+    const courses = shownOnHome ? await Course.find({
+        active: true,
+        shownOnHome: true,
+    }).select([
+        "title",
+        "subtitle",
+        "thumbnail",
+        "price",
+        "modules",
+        "category",
+        "instructor",
+    ])
+        .populate({
+            path: "category",
+            model: Category,
+        })
+        .populate({
+            path: "instructor",
+            model: User,
+        })
+        .populate({
+            path: "testimonials",
+            model: Testimonial,
+        })
+        .populate({
+            path: "modules",
+            model: Module,
+        }).limit(nbOfCourses)
+        .lean() : await Course.find({
         active: true,
     })
         .select([

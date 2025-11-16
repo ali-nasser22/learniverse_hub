@@ -13,7 +13,7 @@ import {getCategoryList} from "../../../queries/categories";
 import React from "react";
 
 const HomePage: React.FC = async () => {
-    const courses = await getCourseList();
+    const courses = await getCourseList(true);
     const categories = await getCategoryList();
     return (
         <div className="min-h-screen flex flex-col items-center w-full">

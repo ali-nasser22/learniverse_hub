@@ -18,6 +18,7 @@ export interface ICourse extends Document {
     category?: ICategory;
     instructor: IUser;
     testimonials?: ITestimonial[];
+    shownOnHome: boolean;
     quizSet?: Types.ObjectId;
     learning?: string[];
     createdOn: Date;
@@ -52,6 +53,11 @@ const CourseSchema = new Schema<ICourse>({
         type: Number,
         required: true,
         default: 0,
+    },
+    shownOnHome: {
+        type: Boolean,
+        required: true,
+        default: false,
     },
     active: {
         type: Boolean,
