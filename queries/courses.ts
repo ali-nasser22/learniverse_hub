@@ -4,7 +4,7 @@ import {User} from "../model/user-model";
 import {Testimonial} from "../model/testimonial-model";
 import {Module} from "../model/module-model";
 import {replaceMongoIdInArray, replaceMongoIdInObject,} from "@/lib/convertData";
-import {getEnrollmentsForCourse} from "./enrollement";
+import {getAllEnrollments, getEnrollmentsForCourse} from "./enrollement";
 import {getTestimonialsForCourse} from "./testimonials";
 import {Lesson} from "../model/lesson-model";
 
@@ -205,5 +205,56 @@ export async function getCoursesByCategory(categoryId: string) {
     } catch (error) {
         console.error(error);
         throw new Error("Failed to find courses");
+    }
+}
+
+export async function getBestSellerCourseForTheMonth() {
+    const now = new Date();
+    const thisMonth = now.getMonth();
+    const thisYear = now.getFullYear();
+    try {
+        const enrollments = await getAllEnrollments();
+        const enrollmentDates = enrollments.filter((enrollment) => {
+            const enrollmentDate = new Date(enrollment?.enrollment_date);
+            return enrollmentDate.getMonth() === thisMonth && enrollmentDate.getFullYear() === thisYear;
+        })
+        const enrollmentsMap = new Map<ICourse, number>();
+
+        enrollmentDates.forEach((enrollment) => {
+            if (!enrollmentsMap.has(enrollment.course)) {
+                enrollmentsMap.set(enrollment.course, 1);
+            } else {
+                const currentCount = enrollmentsMap.get(enrollment.course) ?? 0;
+                enrollmentsMap.set(enrollment.course, currentCount + 1);
+            }
+        })
+
+        let bestSellerCourseId = null;
+        let maxEnrollments = 0;
+
+        for (const [course, count] of enrollmentsMap.entries()) {
+            if (count > maxEnrollments) {
+                maxEnrollments = count;
+                bestSellerCourseId = course
+            }
+        }
+        const bestSellerCourse = bestSellerCourseId ? bestSellerCourseId : null;
+        if (bestSellerCourse) {
+            const course = await getCourseById(bestSellerCourseId.toString()!);
+            return {
+                course,
+                totalEnrollments: maxEnrollments,
+            }
+        }
+        return {
+            course: {
+                title: 'Not Enrollments Yet',
+            },
+            totalEnrollments: 0
+        }
+
+    } catch (error) {
+        console.error(error);
+        throw error;
     }
 }

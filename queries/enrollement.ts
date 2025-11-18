@@ -55,3 +55,13 @@ export async function hasEnrollmentForCourse(userId: string, courseId: string) {
         return false;
     }
 }
+
+export async function getAllEnrollments() {
+    try {
+        const enrollments = await Enrollment.find({});
+        return JSON.parse(JSON.stringify(enrollments)) as unknown as IEnrollment[];
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}

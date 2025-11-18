@@ -107,6 +107,11 @@ const MainNav: React.FC<MainNavProps> = ({items, children}) => {
                                 <DropdownMenuItem className="cursor-pointer" asChild>
                                     <Link href="/account">Profile</Link>
                                 </DropdownMenuItem>
+                                {loggedInUser?.role === "ADMIN" && (
+                                    <DropdownMenuItem className="cursor-pointer" asChild>
+                                        <Link href="/admin/dashboard">Dashboard</Link>
+                                    </DropdownMenuItem>
+                                )}
                                 {loggedInUser?.role === "INSTRUCTOR" && (
                                     <DropdownMenuItem className="cursor-pointer" asChild>
                                         <Link href="/dashboard">Dashboard</Link>
@@ -129,7 +134,7 @@ const MainNav: React.FC<MainNavProps> = ({items, children}) => {
                                             });
                                         }}
                                     >
-                                        Logout
+                                        Sign Out
                                     </Link>
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
