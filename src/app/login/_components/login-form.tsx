@@ -41,6 +41,8 @@ export function LoginForm() {
                 router.push("/account/enrolled-courses");
             } else if (user.role === "INSTRUCTOR") {
                 router.push("/dashboard");
+            } else if (user.role === "ADMIN") {
+                router.push("/admin/dashboard");
             } else {
                 router.push("/account");
             }
