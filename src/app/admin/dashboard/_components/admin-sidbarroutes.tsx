@@ -19,27 +19,27 @@ const routes: Route[] = [
     {
         icon: Users,
         label: "Manage Users",
-        href: "/admin/users",
+        href: "/admin/dashboard/users",
     },
     {
         icon: BookOpen,
         label: 'Manage Courses',
-        href: "/admin/courses",
+        href: "/admin/dashboard/courses",
     },
     {
         icon: BookCopy,
         label: 'Manage Categories',
-        href: "/admin/categories",
+        href: "/admin/dashboard/categories",
     },
     {
         icon: MessageSquareWarning,
         label: 'Manage Reports',
-        href: "/admin/reports",
+        href: "/admin/dashboard/reports",
     },
     {
         icon: Wrench,
         label: 'Settings',
-        href: "/admin/settings",
+        href: "/admin/dashboard/settings",
     },
 ];
 

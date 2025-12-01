@@ -248,7 +248,7 @@ export async function getBestSellerCourseForTheMonth() {
         }
         return {
             course: {
-                title: 'Not Enrollments Yet',
+                title: 'No Course Was Sold This Month',
             },
             totalEnrollments: 0
         }
