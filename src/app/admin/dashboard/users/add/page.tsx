@@ -30,7 +30,7 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-const AddLive = () => {
+const AddUser = () => {
     const router = useRouter();
 
     const form = useForm<FormValues>({
@@ -167,7 +167,7 @@ const AddLive = () => {
                                 )}
                             />
                             <div className="flex items-center gap-x-2">
-                                <Link href="/dashboard/lives">
+                                <Link href="/admin/dashboard/users">
                                     <Button variant="outline" type="button">
                                         Cancel
                                     </Button>
@@ -184,4 +184,4 @@ const AddLive = () => {
     );
 };
 
-export default AddLive;
+export default AddUser;
