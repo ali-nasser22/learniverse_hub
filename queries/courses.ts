@@ -36,6 +36,7 @@ export async function getCourseList(shownOnHome?: boolean, nbOfCourses = 3) {
         "modules",
         "category",
         "instructor",
+        "shownOnHome",
     ])
         .populate({
             path: "category",
@@ -64,6 +65,7 @@ export async function getCourseList(shownOnHome?: boolean, nbOfCourses = 3) {
             "modules",
             "category",
             "instructor",
+            "shownOnHome",
         ])
         .populate({
             path: "category",

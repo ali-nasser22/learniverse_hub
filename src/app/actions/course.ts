@@ -1,77 +1,95 @@
 "use server";
 
-import { getLoggedInUser } from "@/lib/loggedin-user";
-import { Course, ICourse } from "../../../model/course-model";
-import { createCourse } from "../../../queries/courses";
-import { UpdateQuery } from "mongoose";
-import { revalidatePath } from "next/cache";
-import { deleteModule } from "./module";
-import { Module } from "../../../model/module-model";
-import { deleteLesson } from "./lesson";
-import { Lesson } from "../../../model/lesson-model";
+import {getLoggedInUser} from "@/lib/loggedin-user";
+import {Course, ICourse} from "../../../model/course-model";
+import {createCourse} from "../../../queries/courses";
+import {UpdateQuery} from "mongoose";
+import {revalidatePath} from "next/cache";
+import {deleteModule} from "./module";
+import {Module} from "../../../model/module-model";
+import {deleteLesson} from "./lesson";
+import {Lesson} from "../../../model/lesson-model";
 
 export async function createNewCourse(data: ICourse) {
-  try {
-    const user = await getLoggedInUser();
-    data.instructor = user?.id;
-    const newCourse = await createCourse(data);
-    return newCourse;
-  } catch (error) {
-    console.error(error);
-    throw new Error("Failed to create course");
-  }
+    try {
+        const user = await getLoggedInUser();
+        data.instructor = user?.id;
+        const newCourse = await createCourse(data);
+        return newCourse;
+    } catch (error) {
+        console.error(error);
+        throw new Error("Failed to create course");
+    }
 }
 
 export async function updateCourse(courseId: string, data: unknown) {
-  try {
-    const course = await Course.findByIdAndUpdate(
-      courseId,
-      data as unknown as UpdateQuery<ICourse>
-    );
-    return JSON.parse(JSON.stringify(course));
-  } catch (error) {
-    console.error(error);
-    throw new Error("Failed to update course");
-  }
-}
-export async function deleteCourse(courseId: string) {
-  try {
-    const modules = await Module.find({ course: courseId });
-    await Promise.all(
-      modules.map((module) => deleteModule(module?.id as string))
-    );
-    const lessons = await Lesson.find({
-      moduleId: { $in: modules.map((module) => module?.id) },
-    });
-    await Promise.all(
-      lessons.map((lesson) =>
-        deleteLesson(lesson?.id as string, lesson?.module as string)
-      )
-    );
-    const course = await Course.findByIdAndDelete(courseId);
-    revalidatePath(`/dashboard/courses/${course?.id}`);
-    revalidatePath(`/dashboard/courses`);
-    return JSON.parse(JSON.stringify(course));
-  } catch (error) {
-    console.error(error);
-    throw new Error("Failed to delete course");
-  }
-}
-export async function updateCourseQuizSet(courseId: string, quizSetId: string) {
-  try {
-    const updatedCourse = await Course.findByIdAndUpdate(
-      courseId,
-      { quizSet: quizSetId },
-      { new: true }
-    );
-
-    if (!updatedCourse) {
-      throw new Error("Course not found");
+    try {
+        const course = await Course.findByIdAndUpdate(
+            courseId,
+            data as unknown as UpdateQuery<ICourse>
+        );
+        return JSON.parse(JSON.stringify(course));
+    } catch (error) {
+        console.error(error);
+        throw new Error("Failed to update course");
     }
+}
 
-    return JSON.parse(JSON.stringify(updatedCourse));
-  } catch (error) {
-    console.log(error);
-    throw new Error("Failed to update course quiz set");
-  }
+export async function deleteCourse(courseId: string) {
+    try {
+        const modules = await Module.find({course: courseId});
+        await Promise.all(
+            modules.map((module) => deleteModule(module?.id as string))
+        );
+        const lessons = await Lesson.find({
+            moduleId: {$in: modules.map((module) => module?.id)},
+        });
+        await Promise.all(
+            lessons.map((lesson) =>
+                deleteLesson(lesson?.id as string, lesson?.module as string)
+            )
+        );
+        const course = await Course.findByIdAndDelete(courseId);
+        revalidatePath(`/dashboard/courses/${course?.id}`);
+        revalidatePath(`/dashboard/courses`);
+        return JSON.parse(JSON.stringify(course));
+    } catch (error) {
+        console.error(error);
+        throw new Error("Failed to delete course");
+    }
+}
+
+export async function updateCourseQuizSet(courseId: string, quizSetId: string) {
+    try {
+        const updatedCourse = await Course.findByIdAndUpdate(
+            courseId,
+            {quizSet: quizSetId},
+            {new: true}
+        );
+
+        if (!updatedCourse) {
+            throw new Error("Course not found");
+        }
+
+        return JSON.parse(JSON.stringify(updatedCourse));
+    } catch (error) {
+        console.log(error);
+        throw new Error("Failed to update course quiz set");
+    }
+}
+
+export async function toggleCourseShownOnHome(courseId: string, shownOnHome: boolean) {
+    try {
+        const course = await Course.findByIdAndUpdate(courseId, {
+                shownOnHome
+            },
+            {new: true});
+        if (!course) {
+            throw new Error('Course not found');
+        }
+        return JSON.parse(JSON.stringify(course));
+    } catch (error) {
+        console.error(error);
+        throw new Error("Failed to update course visibility");
+    }
 }
