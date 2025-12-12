@@ -31,7 +31,7 @@ export default async function AdminDashboard() {
         platformRevenue: +revenue.platform, // 10% platform fee from total revenue
         totalCourses: activeCourses.length,
         totalUsers: totalUsers.length,
-        pendingReports: 3,
+        // pendingReports: 3,
         instructorPayouts: +revenue?.instructors// 90% share to instructors
     };
 
@@ -115,21 +115,21 @@ export default async function AdminDashboard() {
                 </Card>
 
                 {/* Pending Reports */}
-                <Card>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">
-                            Pending Reports
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">
-                            {platformStats.pendingReports}
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-1">
-                            Require attention
-                        </p>
-                    </CardContent>
-                </Card>
+                {/*<Card>*/}
+                {/*    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">*/}
+                {/*        <CardTitle className="text-sm font-medium">*/}
+                {/*            Pending Reports*/}
+                {/*        </CardTitle>*/}
+                {/*    </CardHeader>*/}
+                {/*    <CardContent>*/}
+                {/*        <div className="text-2xl font-bold">*/}
+                {/*            {platformStats.pendingReports}*/}
+                {/*        </div>*/}
+                {/*        <p className="text-xs text-muted-foreground mt-1">*/}
+                {/*            Require attention*/}
+                {/*        </p>*/}
+                {/*    </CardContent>*/}
+                {/*</Card>*/}
 
                 {/* Instructor Payouts This Month */}
                 <Card>
