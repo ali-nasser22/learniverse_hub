@@ -70,7 +70,7 @@ const UserSchema = new Schema<IUser>(
         profilePicture: {
             type: String,
             required: false,
-            default: "https://i.pravatar.cc",
+            // default: "https://i.pravatar.cc",
         },
         designation: {
             type: String,

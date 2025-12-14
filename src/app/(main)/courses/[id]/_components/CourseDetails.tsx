@@ -1,4 +1,3 @@
-import Image from "next/image";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 
 import CourseOverView from "./CourseOverView";
@@ -7,6 +6,8 @@ import CourseInstructor from "./CourseInstructor";
 import {getCourseById} from "../../../../../../queries/courses";
 import {ICourse} from "../../../../../../model/course-model";
 import {formatMyDate} from "../../../../../lib/date";
+import {Avatar, AvatarFallback} from "@/components/ui/avatar";
+import React from "react";
 
 interface CourseDetailsProps {
     params: Promise<{ id: string }>;
@@ -30,13 +31,12 @@ const CourseDetails = async ({params}: CourseDetailsProps) => {
                 {/*  */}
                 <div className="flex sm:items-center gap-5 flex-col sm:flex-row sm:gap-6 md:gap-20 mt-6">
                     <div className="flex items-center gap-2">
-                        <Image
-                            className="w-[40px] h-[40px] rounded-full"
-                            src={`${course.instructor?.profilePicture}`}
-                            alt={`${course.instructor.firstName} ${course.instructor.lastName}`}
-                            width={40}
-                            height={40}
-                        />
+                        <Avatar>
+                            <AvatarFallback>
+                                {course.instructor.firstName?.charAt(0)}
+                                {course.instructor.lastName?.charAt(0)}
+                            </AvatarFallback>
+                        </Avatar>
                         <p className="font-bold">
                             {course.instructor.firstName} {course.instructor.lastName}
                         </p>

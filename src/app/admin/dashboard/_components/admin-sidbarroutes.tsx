@@ -1,6 +1,6 @@
 "use client";
 
-import {BookCopy, BookOpen, LucideIcon, MessageSquareWarning, Settings, Users, Wrench} from "lucide-react";
+import {BookCopy, BookOpen, LucideIcon, Settings, Users} from "lucide-react";
 import {SidebarItem} from "@/app/dashboard/_components/sidebar-item";
 
 
@@ -31,16 +31,16 @@ const routes: Route[] = [
         label: 'Manage Categories',
         href: "/admin/dashboard/categories",
     },
-    {
-        icon: MessageSquareWarning,
-        label: 'Manage Reports',
-        href: "/admin/dashboard/reports",
-    },
-    {
-        icon: Wrench,
-        label: 'Settings',
-        href: "/admin/dashboard/settings",
-    },
+    // {
+    //     icon: MessageSquareWarning,
+    //     label: 'Manage Reports',
+    //     href: "/admin/dashboard/reports",
+    // },
+    // {
+    //     icon: Wrench,
+    //     label: 'Settings',
+    //     href: "/admin/dashboard/settings",
+    // },
 ];
 
 export const AdminSidebarRoutes = () => {

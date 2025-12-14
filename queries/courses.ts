@@ -167,7 +167,7 @@ export async function getCourseDetailsByInstructor(
         enrollments: totalEnrollments,
         reviews: totalTestimonials,
         rating: averageRating.toPrecision(2),
-        revenue: totalRevenue,
+        revenue: totalRevenue * 0.9,
     };
 }
 
