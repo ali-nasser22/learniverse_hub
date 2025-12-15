@@ -11,5 +11,5 @@ export const PUBLIC_ROUTES = [
     "/blog",
     "/pricing",
     "/documentation",
-    "/terms&conditions"
+    "/terms&conditions",
 ];

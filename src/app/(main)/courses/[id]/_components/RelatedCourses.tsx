@@ -17,8 +17,8 @@ interface IProps {
 
 const RelatedCourses = async ({params}: IProps) => {
     const {id} = await params;
-    const course = await getCourseById(id) as unknown as ICourse;
-    const categoryCourses = await getCoursesByCategory(course?.category?._id.toString());
+    const thisCourse = await getCourseById(id) as unknown as ICourse;
+    const categoryCourses = await getCoursesByCategory(thisCourse?.category?._id.toString());
     const coursesToShow = categoryCourses.filter((course) => course.id !== id);
     if (coursesToShow.length === 0) {
         return;
@@ -56,7 +56,7 @@ const RelatedCourses = async ({params}: IProps) => {
                                                 {course.title}
                                             </div>
                                             <p className="text-xs text-muted-foreground">
-                                                {course.category?.name || "Uncategorized"}
+                                                {thisCourse?.category?.title}
                                             </p>
                                             <div className="my-3 flex items-center gap-x-2 text-sm md:text-xs">
                                                 <div className="flex items-center gap-x-1 text-slate-500">

@@ -50,6 +50,7 @@ const CourseDetailsIntro = async ({params}: CourseDetailsIntroProps) => {
         }
         const courseData = await getCourseById(resolvedParams.id);
 
+
         if (!courseData) {
             console.warn("Course not found for ID:", resolvedParams.id);
             return (
@@ -119,27 +120,35 @@ const CourseDetailsIntro = async ({params}: CourseDetailsIntroProps) => {
                   </span>
                                 </p>
 
-                                {isEnrolled ?
-                                    <Link href={`/courses/${resolvedParams.id}/lesson`}><Button className="mt-6">Access
-                                        Course</Button></Link> :
-                                    <div className="mt-6 flex items-center justify-center flex-wrap gap-3">
-                                        <EnrollCourse asLink={false} courseId={course.id}/>
-                                        <Link
-                                            href={`/courses/${resolvedParams.id}/lesson`}
-                                            className={cn(
-                                                buttonVariants({variant: "outline", size: "lg"})
-                                            )}
-                                        >
-                                            See Intro
-                                        </Link>
-                                        <Button
-                                            className={cn(
-                                                buttonVariants({variant: "destructive", size: "lg"})
-                                            )}
-                                        >
-                                            Price: {formatPrice(course?.price)}
-                                        </Button>
-                                    </div>}
+                                {course?.instructor._id == loggedInUser?.id ? <Link
+                                        href={`/courses/${resolvedParams.id}/lesson`}
+                                        className={cn(
+                                            buttonVariants({variant: "outline", size: "lg"},)
+                                        )}
+                                    >
+                                        See Intro
+                                    </Link> :
+                                    isEnrolled ?
+                                        <Link href={`/courses/${resolvedParams.id}/lesson`}><Button className="mt-6">Access
+                                            Course</Button></Link> :
+                                        <div className="mt-6 flex items-center justify-center flex-wrap gap-3">
+                                            <EnrollCourse asLink={false} courseId={course.id}/>
+                                            <Link
+                                                href={`/courses/${resolvedParams.id}/lesson`}
+                                                className={cn(
+                                                    buttonVariants({variant: "outline", size: "lg"})
+                                                )}
+                                            >
+                                                See Intro
+                                            </Link>
+                                            <Button
+                                                className={cn(
+                                                    buttonVariants({variant: "destructive", size: "lg"})
+                                                )}
+                                            >
+                                                Price: {formatPrice(course?.price)}
+                                            </Button>
+                                        </div>}
                             </div>
                         </div>
 

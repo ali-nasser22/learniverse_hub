@@ -202,6 +202,7 @@ export async function getCoursesByCategory(categoryId: string) {
     try {
         const courses = await Course.find({
             category: categoryId,
+            active: true,
         }).lean();
         return replaceMongoIdInArray(courses);
     } catch (error) {
