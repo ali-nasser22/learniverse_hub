@@ -64,6 +64,7 @@ const Module = async ({params}: ModulePageProps) => {
                             <ModuleTitleForm
                                 initialData={{
                                     title: myModule?.title,
+
                                 }}
                                 courseId={course?.id as string}
                                 moduleId={moduleId}

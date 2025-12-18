@@ -12,6 +12,8 @@ import {IModule} from "../../../../../../../model/module-model";
 import {getReport} from "../../../../../../../queries/reports";
 import Quiz from "./quiz";
 import {getQuizSetById} from "../../../../../../../queries/quizsets";
+import AlertBanner from "@/components/banner";
+import {serializeDocuments} from "@/lib/serialize";
 
 interface IProps {
     courseId: string;
@@ -66,10 +68,9 @@ export const CourseSidebar = async ({courseId, isEnrolled}: IProps) => {
         slug: quizSetData.slug,
         id: quizSetData.id,
         active: quizSetData.active,
-        quizIds: quizSetData?.quizIds?.map((quiz) => {
-            return replaceMongoIdInObject(quiz);
-        })
+        quizIds: serializeDocuments(quizSetData?.quizIds)
     }
+    console.log(transformedQuizSet)
     return (
         <>
             <div className="h-full border-r flex flex-col overflow-y-auto shadow-sm">
@@ -85,17 +86,16 @@ export const CourseSidebar = async ({courseId, isEnrolled}: IProps) => {
                 </div>
                 <SidebarModules isEnrolled={isEnrolled} courseId={courseId} modules={updatedModules}/>
                 <div className="w-full px-4 lg:px-14 pt-10 pb-5 border-t">
-                    {quizSet && <Quiz quizSet={transformedQuizSet} courseId={courseId} isAttempted={isQuizCompleted}/>}
+                    {(quizSet && progressPercentage === 100) &&
+                        <Quiz quizSet={transformedQuizSet} courseId={courseId} isAttempted={isQuizCompleted}/>}
                 </div>
                 <div className="w-full px-6 pb-10">
                     {(progressPercentage === 100 && loggedInUser) && (
                         <GiveReviewModal courseId={courseId} userId={loggedInUser.id}/>)}
                     {isQuizCompleted && progressPercentage === 100 ? (
                         <DownloadCertificate courseId={courseId} progressPercentage={progressPercentage}/>) : (
-                        <p className="text-md mt-6 bg-red-500 font-bold text-white p-2 rounded-2xl">Please Finish The
-                            Quiz To Be
-                            Able To Download
-                            Certificate</p>)}
+                        progressPercentage === 100 && (
+                            <AlertBanner label='finish quiz to be able to download certificate' className='mt-4'/>))}
                 </div>
             </div>
         </>
