@@ -9,6 +9,8 @@ import {ILesson} from "../../../../../../model/lesson-model";
 import {LessonVideo} from "@/app/(main)/courses/[id]/lesson/_components/lesson-video";
 import {getAllLivesForUser} from "../../../../../../queries/lives";
 import Link from "next/link";
+import {getReport} from "../../../../../../queries/reports";
+import {getLoggedInUser} from "@/lib/loggedin-user";
 
 interface IProps {
     params: Promise<{ id: string }>;
@@ -20,11 +22,37 @@ const Course = async ({params, searchParams}: IProps) => {
     const resolvedParams = await params; //course id
     const otherParams = await searchParams; // lesson slug and module slug
     const course = await getCourseById(resolvedParams.id) as ICourse;
+    // const totalLessons = course?.modules?.reduce((acc, module) => {
+    //     return module.lessonIds!.length + acc;
+    // }, 0);
+    const student = await getLoggedInUser();
+    const report = await getReport({
+        course: course.id!,
+        student: student!.id,
+    })
     const allModules = replaceMongoIdInArray(course?.modules)
         .sort((a, b) => a.order - b.order) as unknown as IModule[];
-    const defaultLesson = replaceMongoIdInObject(allModules[0]?.lessonIds
-        ?.sort((a, b) => a.order - b.order)[0]) as unknown as ILesson;
-    const lessonToPlay = otherParams.name ? await getLessonBySlug(otherParams?.name) as unknown as ILesson : defaultLesson;
+    const orderedLessons: ILesson[] = allModules
+        .flatMap((module) =>
+            module.lessonIds
+                ?.sort((a, b) => a.order - b.order)
+                .map((l) => replaceMongoIdInObject(l))
+        )
+        .filter(Boolean) as ILesson[];
+    const completedLessonIds = new Set(
+        report?.totalCompletedLessons?.map((l) => l.toString())
+    );
+    const nextLesson =
+        orderedLessons.find(
+            (lesson) => !completedLessonIds?.has(lesson.id!)
+        ) ?? orderedLessons[0];
+
+    // const defaultLesson = replaceMongoIdInObject(allModules[0]?.lessonIds
+    //     ?.sort((a, b) => a.order - b.order)[0]) as unknown as ILesson;
+    const lessonToPlay = otherParams.name
+        ? (await getLessonBySlug(otherParams.name)) as ILesson
+        : nextLesson;
+
     const defaultModule = otherParams.module ?? allModules[0].slug;
     const livesData = await getAllLivesForUser(course?.instructor?._id.toString());
     const lives = livesData?.filter((live) => new Date(live?.schedule) > new Date());
